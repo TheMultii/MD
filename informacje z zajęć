@@ -1,0 +1,17 @@
+ZAJĘCIA 1
+dwa sprawozdania większe, trzecie mniejsze, w pierwszym:
+program ma generować graf, generuje macierz wag, spisuje cykle (?), podaje kody tych cykli i ich wagi(???)
+
+na podstawie macierzy ołówkiem narysować graf, zrobić zdjęcie i wkleić do sprawozdania (druga część)
+wygenerować kilka grafów (mówił o trzech)
+CZYLI
+wygenerować graf, wygenerować macierz, komputer ma wypisać listę i mamy ją przemienić w "rysuneczek"
+
+trzecie to dwie/trzy godzinki roboty, skopiować procedury, wkleić co będzie wydrukowane z programu w txt i narysować te rysuneczki (kolejny raz...?) i to zrobić w PDF
+
+wypełnianić macierz wag, wypełniona losowo, liczbami z zakresu 1-10 (wagi na krawędziach) (z tym, że w pliku jest inny zakres)
+
+dwa rysunki - jeden to pierwsza próba narysowania grafu, wyjdzie za pewnie dziwaczny, druga - spróbować go jakoś ładnie ułożyć
+W pliku od niego jest, że trzeba podać "informacje o generatorze losowym" ALE on to przerobi na cykle (ciul wie co ma na myśli)
+rysowanie tych drzew JEST W DRUGIEJ CZĘŚCI (z tym, że nie mamy drzew, tylko grafy)
+o reszcie "jeszcze nie mówiliśmy"
