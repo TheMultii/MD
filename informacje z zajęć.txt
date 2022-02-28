@@ -15,3 +15,8 @@ dwa rysunki - jeden to pierwsza próba narysowania grafu, wyjdzie za pewnie dziw
 W pliku od niego jest, że trzeba podać "informacje o generatorze losowym" ALE on to przerobi na cykle (ciul wie co ma na myśli)
 rysowanie tych drzew JEST W DRUGIEJ CZĘŚCI (z tym, że nie mamy drzew, tylko grafy)
 o reszcie "jeszcze nie mówiliśmy"
+
+ZAJĘCIA 2 (wykład)
+Jeżeli zostajemy na online to ten projekt + dwa raporty w grupach
+Jeżeli wrócimy to projekt + dwa kolokwia samodzielnie
+PROJEKT W GRUPACH TAK CZY SIAK
