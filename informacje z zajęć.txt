@@ -16,7 +16,8 @@ W pliku od niego jest, że trzeba podać "informacje o generatorze losowym" ALE 
 rysowanie tych drzew JEST W DRUGIEJ CZĘŚCI (z tym, że nie mamy drzew, tylko grafy)
 o reszcie "jeszcze nie mówiliśmy"
 
-ZAJĘCIA 2 (wykład)
+ZAJĘCIA 2 
+wykład:
 Jeżeli zostajemy na online to ten projekt + dwa raporty w grupach
 Jeżeli wrócimy to projekt + dwa kolokwia samodzielnie
 PROJEKT W GRUPACH TAK CZY SIAK
@@ -28,3 +29,5 @@ wyk_no_2_cycles - strona 13
 - stopień dla wierzchołka określa ilość połączeń z innymi wierzchołkami
 - strona 14, jeżeli dla dwoch cyfr w poziomie powtarza się wartość bool w pionie to cykl o długości 3 istnieje (trzeba zrobić tablice bool w ktorej będzie zapisane które krawędzi istnieją)
 - strona 17 w każdej grupie jeden zespół kliki: 7, 8, 9 (mam przeczucie, że lepiej, żebyśmy to nie byli my)
+
+ćwiczenia2 57 minuta cykl Hamiltona
