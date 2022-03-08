@@ -31,3 +31,5 @@ wyk_no_2_cycles - strona 13
 - strona 17 w każdej grupie jeden zespół kliki: 7, 8, 9 (mam przeczucie, że lepiej, żebyśmy to nie byli my)
 
 ćwiczenia2 57 minuta cykl Hamiltona
+
+ćwiczenia3 58 minuta co ma robić ten program
