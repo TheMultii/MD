@@ -13,7 +13,7 @@ int maxPolaczen(int liczbaWierzcholkow) => (liczbaWierzcholkow * (liczbaWierzcho
 void wypelnij(int[,] p, int n) {
     int odrzucone_globalnie = 0,
         odrzucone_w_iteracji,
-        aktualny_wierzcholek = 0;
+        aktualna_iteracja = 0;
     for (int i = 1; i < n; i++) {
         odrzucone_w_iteracji = odrzucone_globalnie; //program odrzuca możliwość wystąpienia 1-4 i 4-1
         for (int j = 1; j <= n; j++) {
@@ -21,9 +21,9 @@ void wypelnij(int[,] p, int n) {
                 if (odrzucone_w_iteracji != 0) {
                     odrzucone_w_iteracji--;
                 } else {
-                    p[aktualny_wierzcholek, 0] = i;
-                    p[aktualny_wierzcholek, 1] = j;
-                    aktualny_wierzcholek++;
+                    p[aktualna_iteracja, 0] = i;
+                    p[aktualna_iteracja, 1] = j;
+                    aktualna_iteracja++;
                 }
             }
         }
