@@ -33,3 +33,5 @@ wyk_no_2_cycles - strona 13
 ćwiczenia2 57 minuta cykl Hamiltona
 
 ćwiczenia3 58 minuta co ma robić ten program
+
+wyk_no_4b_ok.pdf KOLOKWIUM KODOWANIE I ODKODOWANIE (na 5 stronie końcówka tego.....?)
