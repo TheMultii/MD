@@ -38,13 +38,13 @@ void stworz(int[,] p, int n, double szansa, int waga_min, int waga_max) {
     }
 }
 
-int ZliczanieTrojkatow(int[,] istnieniepolaczen, int iloscwierzcholkow) {
+int zliczanieTrojkatow(int[,] istnieniePolaczen, int iloscWierzcholkow) {
     int iloscTrojkatow = 0;
-    for (int i = 0; i < iloscwierzcholkow; i++) { //przeszukiwanie tablicy, aż znajdziemy 1
-        for (int j = 0; j < iloscwierzcholkow; j++) {
-            if (istnieniepolaczen[i, j] == 1) { //trafiamy na jakąś
-                for (int k = 0; k < iloscwierzcholkow; k++) {
-                    if (istnieniepolaczen[k, i] == 1 && istnieniepolaczen[k, j] == 1) { //sprawdzamy czy w jednym wierszu dla obu kolumn są jedynki
+    for (int i = 0; i < iloscWierzcholkow; i++) { //przeszukiwanie tablicy, aż znajdziemy 1
+        for (int j = 0; j < iloscWierzcholkow; j++) {
+            if (istnieniePolaczen[i, j] == 1) { //trafiamy na jakąś
+                for (int k = 0; k < iloscWierzcholkow; k++) {
+                    if (istnieniePolaczen[k, i] == 1 && istnieniePolaczen[k, j] == 1) { //sprawdzamy czy w jednym wierszu dla obu kolumn są jedynki
                         iloscTrojkatow++;
                     }
                 }
@@ -54,7 +54,7 @@ int ZliczanieTrojkatow(int[,] istnieniepolaczen, int iloscwierzcholkow) {
     return iloscTrojkatow / 6; //zliczy każdy trójkąt 3! razy
 }
 
-void UzupelnianieIstniejacychPolaczen(int iloscWierzcholkow, int[,] istnieniePolaczen, int[,] polaczenia) {
+void uzupelnianieIstniejacychPolaczen(int iloscWierzcholkow, int[,] istnieniePolaczen, int[,] polaczenia) {
     for (int i = 0; i < iloscWierzcholkow; i++) {
         for (int j = 0; j < iloscWierzcholkow; j++) {
             istnieniePolaczen[i, j] = 0;
@@ -89,5 +89,5 @@ for (int i = 0; i < maxPolaczen(iloscWierzcholkow); i++) {
 }
 
 int [,] istnieniePolaczen = new int[iloscWierzcholkow, iloscWierzcholkow]; 
-UzupelnianieIstniejacychPolaczen(iloscWierzcholkow, istnieniePolaczen, polaczenia);
-Console.WriteLine($"ilość trójkątów = {ZliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow)}");
+uzupelnianieIstniejacychPolaczen(iloscWierzcholkow, istnieniePolaczen, polaczenia);
+Console.WriteLine($"ilość trójkątów = {zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow)}");
