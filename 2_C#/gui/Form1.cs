@@ -9,31 +9,82 @@ namespace MD_graf_gui {
             return r.Next(minimum, maximum);
         }
 
-        private void drawFC(int kreski = 5) {
+        private Point[] points;
+        private Color[] colors;
+
+        private void drawPoints(int lines = 5) {
+            points = new Point[lines];
+            colors = new Color[lines];
+            for (int i = 0; i < lines; i++) {
+                points[i] = new(GetRandomInt(100, this.Width - 100), GetRandomInt(100, this.Height - 100));
+                colors[i] = Color.FromArgb(GetRandomInt(0, 200), GetRandomInt(0, 200), GetRandomInt(0, 200));
+            }
+        }
+
+        private void drawGraph() {
             Graphics g = this.CreateGraphics();
             g.Clear(Color.White);
 
-            Point pX = new(GetRandomInt(0, this.Width - 100), GetRandomInt(0, this.Height - 100)),
-                pY = new(GetRandomInt(0, this.Width - 100), GetRandomInt(0, this.Height - 100));
-
-            for (int i = 0; i < kreski; i++) {
-                g.FillEllipse(new SolidBrush(Color.Black), pX.X - 5, pX.Y - 5, 10, 10);
-                g.DrawLine(new(Color.FromArgb(GetRandomInt(0, 200), GetRandomInt(0, 200), GetRandomInt(0, 200)), 4), pX, pY);
-                if (i + 1 == kreski) {
-                    g.FillEllipse(new SolidBrush(Color.Black), pY.X - 5, pY.Y - 5, 10, 10);
-                } else {
-                    pX = pY;
-                    pY = new(GetRandomInt(0, this.Width - 100), GetRandomInt(0, this.Height - 100));
+            for (int i = 0; i < points.Length; i++) {
+                var pt = points[i];
+                
+                g.FillEllipse(new SolidBrush(Color.Black), pt.X - 5, pt.Y - 5, 10, 10);
+                if(i+1!=points.Length) {
+                    g.DrawLine(new(colors[i], 4), pt, points[i+1]);
                 }
             }
         }
 
         private void Form1_Shown(object sender, EventArgs e) {
-            drawFC(5);
+            drawPoints(5);
+            drawGraph();
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            drawFC(GetRandomInt(5,10));
+            drawPoints(GetRandomInt(5,10));
+            drawGraph();
+        }
+
+        private bool isMouseDown = false;
+        private int pointIndexBeingMoved = -1;
+        private string preString = "";
+
+        private void mMove(object sender, MouseEventArgs e) {
+            if(isMouseDown) {
+                button2.Text = $"{preString}{e.X}, {e.Y}";
+            } else {
+                button2.Text = $"{preString}-, -";
+            }
+        }
+
+        private void mUp(object sender, MouseEventArgs e) {
+            if(isMouseDown && pointIndexBeingMoved != -1) {
+                points[pointIndexBeingMoved] = new(e.X, e.Y);
+                pointIndexBeingMoved = -1;
+                drawGraph();
+            }
+            isMouseDown = false;
+        }
+
+        void mDown(object sender, MouseEventArgs e) {
+            bool isFound = false;
+            for (int i = 0; i < points.Length; i++) {
+                Point pt = points[i];
+                if (e.X - 10 <= pt.X && pt.X <= e.X + 10 && e.Y - 10 <= pt.Y && pt.Y <= e.Y + 10) {
+                    pointIndexBeingMoved = i;
+                    preString = $"({pt.X}, {pt.Y}) ";
+                    isFound = true;
+                    break;
+                }
+            }
+
+            //debug
+            if(!isFound) {
+                preString = "";
+            }
+            //debug
+
+            isMouseDown = true;
         }
     }
 }
