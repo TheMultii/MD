@@ -69,13 +69,9 @@ void uzupelnianieIstniejacychPolaczen(int iloscWierzcholkow, int[,] istnieniePol
 }
 
 bool sprawdzPoprawnoscGrafu(int iloscWierzcholkow, int[,] istnieniePolaczen, int[,] polaczenia) {
-    int ileWierzcholkowWystapilo;
+    int ileWierzcholkowWystapilo = 0;
     try {
         uzupelnianieIstniejacychPolaczen(iloscWierzcholkow, istnieniePolaczen, polaczenia);
-        bool[] sprawdzoneWierzcholki = new bool[iloscWierzcholkow];
-        for (int i = 0; i < sprawdzoneWierzcholki.Length; i++) {
-            sprawdzoneWierzcholki[i] = false;
-        }
         int[,] wierzcholkiDoSprawdzenia = new int[2, iloscWierzcholkow * iloscWierzcholkow];
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < iloscWierzcholkow * iloscWierzcholkow; j++) {
@@ -83,68 +79,91 @@ bool sprawdzPoprawnoscGrafu(int iloscWierzcholkow, int[,] istnieniePolaczen, int
             }
         }
         bool warunekZakonczenia = true;
-        ileWierzcholkowWystapilo = 0;
-        int gdzieWpisacNowe = 0,
-        ktoraSprawdzamy = 0,
-        kolumnaCzyWiersz = 0; //0 - kolumna, 1 - wiersz
+        int gdzieWpisacKolejnyWierzcholek = 0;
+        int obecnieSprawdzanyWierzcholek = 0;
+        bool[] sprawdzoneWierzcholki = new bool[iloscWierzcholkow];
+        for (int i = 0; i < iloscWierzcholkow; i++) {
+            sprawdzoneWierzcholki[i] = false;
+        }
         for (int i = 0; i < iloscWierzcholkow; i++) {
             if (istnieniePolaczen[0, i] == 1) {
-                wierzcholkiDoSprawdzenia[0, gdzieWpisacNowe] = 0;
-                wierzcholkiDoSprawdzenia[1, gdzieWpisacNowe] = i;
-                gdzieWpisacNowe++;
+                wierzcholkiDoSprawdzenia[0, gdzieWpisacKolejnyWierzcholek] = i;
+                wierzcholkiDoSprawdzenia[1, gdzieWpisacKolejnyWierzcholek] = 0;
+                gdzieWpisacKolejnyWierzcholek++;
             }
         }
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < iloscWierzcholkow * iloscWierzcholkow; j++) {
-                if (wierzcholkiDoSprawdzenia[i, j] != -1) {
-                    sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[i, j]] = true;
+        if (wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek] != -1) {
+            for (int i = obecnieSprawdzanyWierzcholek; i < iloscWierzcholkow * iloscWierzcholkow; i++) {
+                if (wierzcholkiDoSprawdzenia[0, i] != -1) {
+                    sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[0, i]] = true;
+                    sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[1, i]] = true;
                 }
             }
-        }
-
-        do {
-            if (kolumnaCzyWiersz == 0) {
-                for (int i = 0; i < iloscWierzcholkow; i++) {
-                    if (istnieniePolaczen[i, ktoraSprawdzamy] == 1) {
-                        wierzcholkiDoSprawdzenia[0, gdzieWpisacNowe] = 0;
-                        wierzcholkiDoSprawdzenia[1, gdzieWpisacNowe] = i;
-                        gdzieWpisacNowe++;
-                    }
-                }
-                kolumnaCzyWiersz = 1;
-            } else {
-                for (int i = 0; i < iloscWierzcholkow; i++) {
-                    if (istnieniePolaczen[ktoraSprawdzamy, i] == 1) { //przy nieprawidlowym twierdzi, że wychodze poza zakres
-                        wierzcholkiDoSprawdzenia[0, gdzieWpisacNowe] = 0;
-                        wierzcholkiDoSprawdzenia[1, gdzieWpisacNowe] = i;
-                        gdzieWpisacNowe++;
-                    }
-                }
-                kolumnaCzyWiersz = 0;
-            }
-            for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < iloscWierzcholkow * iloscWierzcholkow; j++) {
-                    if (wierzcholkiDoSprawdzenia[i, j] != -1) {
-                        sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[i, j]] = true;
-                    }
-                }
-            }
-            ktoraSprawdzamy++;
             for (int i = 0; i < iloscWierzcholkow; i++) {
-                if (sprawdzoneWierzcholki[i] == true) {
+                if (sprawdzoneWierzcholki[i] == true)
+                {
                     ileWierzcholkowWystapilo++;
                 }
             }
             if (ileWierzcholkowWystapilo == iloscWierzcholkow) {
                 warunekZakonczenia = false;
-            } else {
+            }
+            else {
                 ileWierzcholkowWystapilo = 0;
             }
-            if (wierzcholkiDoSprawdzenia[0, ktoraSprawdzamy] == -1) {
+        }
+        else {
+            warunekZakonczenia = false;
+        }
+        int kolumnaCzyWiersz = 0;
+        while (warunekZakonczenia == true) {
+            istnieniePolaczen[wierzcholkiDoSprawdzenia[1, obecnieSprawdzanyWierzcholek], wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek]] = 0;
+            if (kolumnaCzyWiersz == 0) {
+                for (int i = 0; i < iloscWierzcholkow; i++) {
+                    if (istnieniePolaczen[i, wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek]] == 1) {
+                        wierzcholkiDoSprawdzenia[0, gdzieWpisacKolejnyWierzcholek] = wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek];
+                        wierzcholkiDoSprawdzenia[1, gdzieWpisacKolejnyWierzcholek] = i;
+                        gdzieWpisacKolejnyWierzcholek++;
+                    }
+                }
+                kolumnaCzyWiersz = 1;
+            }
+            else {
+                for (int i = 0; i < iloscWierzcholkow; i++) {
+                    if (istnieniePolaczen[wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek], i] == 1) {
+                        wierzcholkiDoSprawdzenia[0, gdzieWpisacKolejnyWierzcholek] = i;
+                        wierzcholkiDoSprawdzenia[1, gdzieWpisacKolejnyWierzcholek] = wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek];
+                        gdzieWpisacKolejnyWierzcholek++;
+                    }
+                }
+                kolumnaCzyWiersz = 0;
+            }
+            obecnieSprawdzanyWierzcholek++;
+            if (wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek] != -1) {
+                for (int i = 0; i < iloscWierzcholkow * iloscWierzcholkow; i++) {
+                    if (wierzcholkiDoSprawdzenia[0, i] != -1) {
+                        sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[0, i]] = true;
+                        sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[1, i]] = true;
+                    }
+                }
+                for (int i = 0; i < iloscWierzcholkow; i++) {
+                    if (sprawdzoneWierzcholki[i] == true) {
+                        ileWierzcholkowWystapilo++;
+                    }
+                }
+                if (ileWierzcholkowWystapilo == iloscWierzcholkow) {
+                    warunekZakonczenia = false;
+                }
+                else {
+                    ileWierzcholkowWystapilo = 0;
+                }
+            }
+            else {
                 warunekZakonczenia = false;
             }
-        } while (warunekZakonczenia == true);
-    } catch (Exception) {
+        }
+    }
+    catch (Exception) {
         //Console.WriteLine("graf is zepsuted");
         return false;
     }
@@ -152,7 +171,8 @@ bool sprawdzPoprawnoscGrafu(int iloscWierzcholkow, int[,] istnieniePolaczen, int
     if (ileWierzcholkowWystapilo == iloscWierzcholkow) {
         //Console.WriteLine("jest git");
         return true;
-    } else {
+    }
+    else {
         //Console.WriteLine("graf is zepsuted");
         return false;
     }
