@@ -18,7 +18,7 @@ namespace MD_graf_gui {
             polaczenia = graphGenerator.stworzGraf(iloscWierzcholkow, waga_min, waga_max, szansa);
             distinctPoints = new Point[iloscWierzcholkow];
             for (int i = 0; i < iloscWierzcholkow; i++) {
-                distinctPoints[i] = new Point(GetRandomInt(100, this.Width - 100), GetRandomInt(100, this.Height - 100));
+                distinctPoints[i] = new Point(GetRandomInt(40, this.Width - 40), GetRandomInt(50, this.Height - 50)); //pozycje punktów
             }
 
             colors = new Color[polaczenia.Length];
@@ -30,12 +30,18 @@ namespace MD_graf_gui {
         private void drawGraph() {
             Graphics g = this.CreateGraphics();
             g.Clear(Color.White);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             for (int i = 0; i < polaczenia.GetLength(0); i++) {
-                if(polaczenia[i, 2] != -1) {
+                if (polaczenia[i, 2] != -1) {
                     Point start = distinctPoints[polaczenia[i, 0] - 1];
                     Point end = distinctPoints[polaczenia[i, 1] - 1];
                     g.DrawLine(new(colors[i], 4), start, end);
+
+                    //wagi
+                    if(drawWeight) {
+                        g.DrawString(polaczenia[i, 3].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Black), new Point(((start.X + end.X) / 2), ((start.Y + end.Y) / 2)));
+                    }
                 }
             }
 
@@ -56,7 +62,7 @@ namespace MD_graf_gui {
                 waga_max = int.Parse(wagaMAXInput.Text);
                 double szansa = double.Parse(szansaInput.Text);
 
-                if(waga_min > waga_max || wierzcholki <= 0 || szansa <= 0 || szansa > 1 || waga_min <= 0) {
+                if (waga_min > waga_max || wierzcholki <= 0 || szansa <= 0 || szansa > 1 || waga_min <= 0) {
                     throw new Exception();
                 }
 
@@ -71,7 +77,9 @@ namespace MD_graf_gui {
             }
         }
 
-        private bool isMouseDown = false;
+        private bool isMouseDown = false,
+                     isBold = false,
+                     drawWeight = true;
         private int pointIndexBeingMoved = -1;
         private string preString = "";
 
@@ -111,6 +119,16 @@ namespace MD_graf_gui {
             //debug
 
             isMouseDown = true;
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e) {
+            isBold = boldCheckBox.Checked;
+            drawGraph();
+        }
+
+        private void weightCheckBox_CheckedChanged(object sender, EventArgs e) {
+            drawWeight = weightCheckBox.Checked;
+            drawGraph();
         }
     }
 }
