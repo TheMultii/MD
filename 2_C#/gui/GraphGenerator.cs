@@ -191,6 +191,8 @@
                 istnieniePolaczen = new int[iloscWierzcholkow, iloscWierzcholkow];
             } while (!sprawdzPoprawnoscGrafu(iloscWierzcholkow, istnieniePolaczen, polaczenia));
 
+            uzupelnianieIstniejacychPolaczen(iloscWierzcholkow, istnieniePolaczen, polaczenia);
+
             return polaczenia;
         }
         uzupelnianieIstniejacychPolaczen(iloscWierzcholkow, istnieniePolaczen, polaczenia);
