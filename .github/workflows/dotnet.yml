@@ -20,7 +20,7 @@ jobs:
     - name: navigate to project
       run: cd ./2_C#/gui
     - name: debug
-      run: ls -al
+      run: dir/w
     - name: Restore dependencies
       run: dotnet restore ./2_C#/gui
     - name: Build
