@@ -19,12 +19,8 @@ jobs:
         dotnet-version: 6.0.x
     - name: navigate to project
       run: cd ./2_C#/gui
-    - name: Restore dependencies
-      run: dotnet restore ./2_C#/gui
     - name: Build
       run: dotnet build --no-restore ./2_C#/gui
-    - name: Test
-      run: dotnet test --no-build --verbosity normal ./2_C#/gui
     - name: upload project artifacts
       uses: actions/upload-artifact@v2
       with: 
