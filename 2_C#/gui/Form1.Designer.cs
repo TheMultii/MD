@@ -36,6 +36,10 @@
             this.wagaMAXInput = new System.Windows.Forms.TextBox();
             this.boldCheckBox = new System.Windows.Forms.CheckBox();
             this.weightCheckBox = new System.Windows.Forms.CheckBox();
+            this.trianglesCountButton = new System.Windows.Forms.Button();
+            this.trianglesCountTextBox = new System.Windows.Forms.TextBox();
+            this.squaresCountButton = new System.Windows.Forms.Button();
+            this.squaresCountTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button1
@@ -114,11 +118,37 @@
             this.weightCheckBox.UseVisualStyleBackColor = true;
             this.weightCheckBox.CheckedChanged += new System.EventHandler(this.weightCheckBox_CheckedChanged);
             // 
+            // trianglesCountButton
+            // 
+            resources.ApplyResources(this.trianglesCountButton, "trianglesCountButton");
+            this.trianglesCountButton.Name = "trianglesCountButton";
+            this.trianglesCountButton.UseVisualStyleBackColor = true;
+            // 
+            // trianglesCountTextBox
+            // 
+            resources.ApplyResources(this.trianglesCountTextBox, "trianglesCountTextBox");
+            this.trianglesCountTextBox.Name = "trianglesCountTextBox";
+            // 
+            // squaresCountButton
+            // 
+            resources.ApplyResources(this.squaresCountButton, "squaresCountButton");
+            this.squaresCountButton.Name = "squaresCountButton";
+            this.squaresCountButton.UseVisualStyleBackColor = true;
+            // 
+            // squaresCountTextBox
+            // 
+            resources.ApplyResources(this.squaresCountTextBox, "squaresCountTextBox");
+            this.squaresCountTextBox.Name = "squaresCountTextBox";
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.squaresCountButton);
+            this.Controls.Add(this.squaresCountTextBox);
+            this.Controls.Add(this.trianglesCountButton);
+            this.Controls.Add(this.trianglesCountTextBox);
             this.Controls.Add(this.weightCheckBox);
             this.Controls.Add(this.boldCheckBox);
             this.Controls.Add(this.button6);
@@ -155,5 +185,9 @@
         private TextBox wagaMAXInput;
         private CheckBox boldCheckBox;
         private CheckBox weightCheckBox;
+        private Button trianglesCountButton;
+        private TextBox trianglesCountTextBox;
+        private Button squaresCountButton;
+        private TextBox squaresCountTextBox;
     }
 }

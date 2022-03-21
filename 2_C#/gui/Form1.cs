@@ -25,6 +25,8 @@ namespace MD_graf_gui {
             for (int i = 0; i < polaczenia.Length; i++) {
                 colors[i] = Color.FromArgb(GetRandomInt(0, 200), GetRandomInt(0, 200), GetRandomInt(0, 200));
             }
+
+            trianglesCountTextBox.Text = graphGenerator.liczbaTrojkatow().ToString();
         }
 
         private void drawGraph() {
@@ -66,6 +68,15 @@ namespace MD_graf_gui {
                     throw new Exception();
                 }
 
+                if(wierzcholki > 300 && !wasWarningAccepted) {
+                    var result = MessageBox.Show($"Próbujesz wygenerowaæ graf zawieraj¹cy du¿¹ liczbê ({wierzcholki}) wierzcho³ków.\nGenerowanie takiego grafu mo¿e byæ zasobo¿erne, co za tym idzie mo¿e trwaæ doœæ d³ugo. Czy na pewno chcesz kontynuowaæ?", "Potrzebne potwierdzenie", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes) {
+                        wasWarningAccepted = true;
+                    } else {
+                        return;
+                    }
+                }
+
                 drawPoints(wierzcholki, waga_min, waga_max, szansa);
                 drawGraph();
             } catch (Exception) {
@@ -79,7 +90,8 @@ namespace MD_graf_gui {
 
         private bool isMouseDown = false,
                      isBold = false,
-                     drawWeight = true;
+                     drawWeight = true,
+                     wasWarningAccepted = false;
         private int pointIndexBeingMoved = -1;
         private string preString = "";
 

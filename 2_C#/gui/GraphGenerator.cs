@@ -1,14 +1,8 @@
 ﻿namespace MD_graf_gui {
     public class GraphGenerator {
-        private double GetRandomDouble(double minimum, double maximum) {
-            Random r = new();
-            return r.NextDouble() * (maximum - minimum) + minimum;
-        }
+        private double GetRandomDouble(double minimum, double maximum) => new Random().NextDouble() * (maximum - minimum) + minimum;
 
-        private int GetRandomInt(int minimum, int maximum) {
-            Random r = new();
-            return r.Next(minimum, maximum);
-        }
+        private int GetRandomInt(int minimum, int maximum) => new Random().Next(minimum, maximum);
 
         private int maxPolaczen(int liczbaWierzcholkow) => (liczbaWierzcholkow * (liczbaWierzcholkow - 1)) / 2; //wzór na ilość krawędzi grafu pełnego
 
@@ -41,7 +35,10 @@
             }
         }
 
-        private int zliczanieTrojkatow(int[,] istnieniePolaczen, int iloscWierzcholkow) {
+        private int zliczanieTrojkatow(int[,]? istnieniePolaczen, int iloscWierzcholkow) {
+            if (istnieniePolaczen == null) {
+                return -1;
+            }
             int iloscTrojkatow = 0;
             for (int i = 0; i < iloscWierzcholkow; i++) { //przeszukiwanie tablicy, aż znajdziemy 1
                 for (int j = 0; j < iloscWierzcholkow; j++) {
@@ -156,10 +153,15 @@
 
         //=================//
 
+        private int[,]? istnieniePolaczen;
+        private int iloscWierzcholkow;
+
+
         public int[,] stworzGraf(int iloscWierzcholkow = 5, int waga_min = 1, int waga_max=10, double szansa = 0.5) {
 
-            int[,] polaczenia,
-                   istnieniePolaczen;
+            int[,] polaczenia;
+
+            this.iloscWierzcholkow = iloscWierzcholkow;
 
             do {
                 polaczenia = new int[maxPolaczen(iloscWierzcholkow), 4];
@@ -170,9 +172,9 @@
                 istnieniePolaczen = new int[iloscWierzcholkow, iloscWierzcholkow];
             } while (!sprawdzPoprawnoscGrafu(iloscWierzcholkow, istnieniePolaczen, polaczenia));
 
-            //Console.WriteLine($"ilość trójkątów = {zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow)}");
-
             return polaczenia;
         }
+
+        public int liczbaTrojkatow() => zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow);
     }
 }
