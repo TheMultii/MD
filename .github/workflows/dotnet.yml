@@ -22,11 +22,11 @@ jobs:
     - name: debug
       run: ls -al
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./2_C#/gui
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore ./2_C#/gui
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal ./2_C#/gui
     - name: upload project artifacts
       uses: actions/upload-artifact@v2
       with: 
