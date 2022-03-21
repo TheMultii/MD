@@ -77,7 +77,7 @@ namespace MD_graf_gui {
                     }
                 }
                 
-                if(szansa < 0.001 && !wasWarningAccepted) {
+                if(szansa <= 0.009 && !wasWarningAccepted) {
                     var result = MessageBox.Show($"Wprowadzona wartość szansy może sprawić, że komputer utworzy związki zawodowe i odmówi współpracy. Czy na pewno chcesz kontynuować?", "Potrzebne potwierdzenie", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes) {
                         wasWarningAccepted = true;
