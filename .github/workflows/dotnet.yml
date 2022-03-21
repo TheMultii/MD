@@ -17,12 +17,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
-    - name: navigate to project
-      run: cd ./2_C#/gui
-    - name: restore & build
-      run: dotnet build ./2_C#/gui
+    - name: restore project
+      run: dotnet restore ./2_C#/gui
+    - name: build project
+      run: dotnet build --no-restore ./2_C#/gui
     - name: upload project artifacts
       uses: actions/upload-artifact@v2
       with: 
         name: gui
-        path: ./2_C#/gui
+        path: ./2_C#/gui/bin/Debug/net6.0-windows
