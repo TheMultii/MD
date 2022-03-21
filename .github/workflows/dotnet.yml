@@ -18,7 +18,9 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: navigate to project
-      run: cd 2_C#/gui
+      run: cd ./2_C#/gui
+    - name: debug
+      run: ls -al
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
