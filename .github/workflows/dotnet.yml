@@ -20,7 +20,7 @@ jobs:
     - name: navigate to project
       run: cd ./2_C#/gui
     - name: Build
-      run: dotnet build ./2_C#/gui
+      run: dotnet build --no-restore ./2_C#/gui
     - name: upload project artifacts
       uses: actions/upload-artifact@v2
       with: 
