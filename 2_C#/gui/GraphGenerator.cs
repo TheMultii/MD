@@ -195,7 +195,6 @@
 
             return polaczenia;
         }
-        uzupelnianieIstniejacychPolaczen(iloscWierzcholkow, istnieniePolaczen, polaczenia);
         public int liczbaTrojkatow() => zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow);
     }
 }
