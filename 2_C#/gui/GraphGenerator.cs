@@ -164,11 +164,10 @@
         }
     }
     catch (Exception) {
-        //Console.WriteLine("graf is zepsuted");
         return false;
     }
 
-    return ileWierzcholkowWystapilo == iloscWierzcholkow
+    return ileWierzcholkowWystapilo == iloscWierzcholkow;
 }
 
         //=================//
