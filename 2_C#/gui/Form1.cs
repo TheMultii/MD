@@ -18,7 +18,7 @@ namespace MD_graf_gui {
             polaczenia = graphGenerator.stworzGraf(iloscWierzcholkow, waga_min, waga_max, szansa);
             distinctPoints = new Point[iloscWierzcholkow];
             for (int i = 0; i < iloscWierzcholkow; i++) {
-                distinctPoints[i] = new Point(GetRandomInt(40, this.Width - 40), GetRandomInt(50, this.Height - 50)); //pozycje punktów
+                distinctPoints[i] = new Point(GetRandomInt(40, this.Width - 40), GetRandomInt(50, this.Height - 50)); //pozycje punktÃ³w
             }
 
             colors = new Color[polaczenia.Length];
@@ -69,7 +69,16 @@ namespace MD_graf_gui {
                 }
 
                 if(wierzcholki > 300 && !wasWarningAccepted) {
-                    var result = MessageBox.Show($"Próbujesz wygenerowaæ graf zawieraj¹cy du¿¹ liczbê ({wierzcholki}) wierzcho³ków.\nGenerowanie takiego grafu mo¿e byæ zasobo¿erne, co za tym idzie mo¿e trwaæ doœæ d³ugo. Czy na pewno chcesz kontynuowaæ?", "Potrzebne potwierdzenie", MessageBoxButtons.YesNo);
+                    var result = MessageBox.Show($"PrÃ³bujesz wygenerowaÃ¦ graf zawierajÂ¹cy duÂ¿Â¹ liczbÃª ({wierzcholki}) wierzchoÂ³kÃ³w.\nGenerowanie takiego grafu moÂ¿e byÃ¦ zasoboÂ¿erne, co za tym idzie moÂ¿e trwaÃ¦ doÅ“Ã¦ dÂ³ugo. Czy na pewno chcesz kontynuowaÃ¦?", "Potrzebne potwierdzenie", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes) {
+                        wasWarningAccepted = true;
+                    } else {
+                        return;
+                    }
+                }
+                
+                if(szansa < 0.001 && !wasWarningAccepted) {
+                    var result = MessageBox.Show($"Wprowadzona wartoÅ›Ä‡ szansy moÅ¼e sprawiÄ‡, Å¼e komputer utworzy zwiÄ…zki zawodowe i odmÃ³wi wspÃ³Å‚pracy. Czy na pewno chcesz kontynuowaÄ‡?", "Potrzebne potwierdzenie", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes) {
                         wasWarningAccepted = true;
                     } else {
@@ -84,7 +93,7 @@ namespace MD_graf_gui {
                 wagaMINInput.Text = "1";
                 wagaMAXInput.Text = "10";
                 szansaInput.Text = "0,5";
-                MessageBox.Show("Podane wartoœci s¹ b³êdne", "Jak zawsze coœ posz³o nie tak", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Podane wartoÅ“ci sÂ¹ bÂ³Ãªdne", "Jak zawsze coÅ“ poszÂ³o nie tak", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
