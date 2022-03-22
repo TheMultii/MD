@@ -153,6 +153,7 @@ namespace MD_graf_gui {
         private bool isMouseDown = false,
                      isBold = false,
                      drawWeight = true,
+                     drawLiterki = true,
                      wasWarningAccepted = false;
         private int pointIndexBeingMoved = -1;
         private string preString = "";
