@@ -12,6 +12,7 @@ namespace MD_graf_gui {
         private Point[] distinctPoints;
         private Color[] colors;
         private int[,] polaczenia;
+        private int wierzcholki;
 
         private void drawPoints(int iloscWierzcholkow = 5, int waga_min = 1, int waga_max = 10, double szansa = 0.5) {
             GraphGenerator graphGenerator = new();
@@ -27,8 +28,58 @@ namespace MD_graf_gui {
             }
 
             trianglesCountTextBox.Text = graphGenerator.liczbaTrojkatow().ToString();
+             wierzcholki = iloscWierzcholkow;
         }
 
+        
+         private void Literowanie()
+        {
+            Graphics g = this.CreateGraphics();
+            int k,n=0,m=0;
+
+            for (int i = 0; i < wierzcholki; i++)
+            {
+                Point punkt = distinctPoints[i];
+                string literki = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                char[] alfa = literki.ToCharArray();
+                
+                
+                if (drawLiterki)
+
+                {
+                    if (n > 25) 
+                    {
+                        m++;
+                        n = 0;
+                    }                   
+                    k = i;
+                    if (i <= 25)
+                    {
+  
+                        g.DrawString(alfa[i].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Red), new Point(punkt.X+5, punkt.Y + 5));
+
+                    }
+                    else
+                    {  
+                            k -= 26 + 26*m;
+                       
+                       
+                        g.DrawString(alfa[m].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Orange), new Point(punkt.X -15, punkt.Y + 5)); // literka pomarańczowa dla przykładu kolor do zmiany
+                        g.DrawString(alfa[k].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Red), new Point(punkt.X + 5, punkt.Y + 5));
+                       
+                        n++;
+                    }
+                    
+                        
+                }
+            }
+
+
+        }
+        
+        
+        
+        
         private void drawGraph() {
             Graphics g = this.CreateGraphics();
             g.Clear(Color.White);
@@ -46,6 +97,8 @@ namespace MD_graf_gui {
                     }
                 }
             }
+            
+            Literowanie();
 
             for (int i = 0; i < distinctPoints.Length; i++) {
                 g.FillEllipse(new SolidBrush(Color.Black), distinctPoints[i].X - 5, distinctPoints[i].Y - 5, 10, 10);
