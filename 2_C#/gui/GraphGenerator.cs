@@ -35,13 +35,14 @@
             }
         }
 
-        private int zliczanieTrojkatow(int[,]? istnieniePolaczen, int iloscWierzcholkow) {
+        private int[,]? zliczanieTrojkatow(int[,]? istnieniePolaczen, int iloscWierzcholkow, int[,] polaczenia) {
             if (istnieniePolaczen == null) {
-                return -1;
+                return null;
             }
             int iloscTrojkatow = 0;
             for (int i = 0; i < iloscWierzcholkow; i++) { //przeszukiwanie tablicy, aż znajdziemy 1
-                for (int j = 0; j < iloscWierzcholkow; j++) {
+                for (int j = 0; j < iloscWierzcholkow; j++)
+                {
                     if (istnieniePolaczen[i, j] == 1) { //trafiamy na jakąś
                         for (int k = 0; k < iloscWierzcholkow; k++) {
                             if (istnieniePolaczen[k, i] == 1 && istnieniePolaczen[k, j] == 1) { //sprawdzamy czy w jednym wierszu dla obu kolumn są jedynki
@@ -51,7 +52,64 @@
                     }
                 }
             }
-            return iloscTrojkatow / 6; //zliczy każdy trójkąt 3! razy
+            iloscTrojkatow = iloscTrojkatow / 6;
+            int[,] trojkaty = new int[iloscTrojkatow, 4];
+            int[] znalezionyTrojkat = new int[3];
+            int aktualnyWiersz = 0;
+            for (int i = 0; i < iloscWierzcholkow; i++) { //przeszukiwanie tablicy, aż znajdziemy 1
+                for (int j = 0; j < iloscWierzcholkow; j++) {
+                    if (istnieniePolaczen[i, j] == 1) { //trafiamy na jakąś
+                        for (int k = 0; k < iloscWierzcholkow; k++) {
+                            if (istnieniePolaczen[k, i] == 1 && istnieniePolaczen[k, j] == 1) { //sprawdzamy czy w jednym wierszu dla obu kolumn są jedynki
+                                znalezionyTrojkat[0] = i; //zapisujemy wierzcholki znalezionego trojkata
+                                znalezionyTrojkat[1] = j;
+                                znalezionyTrojkat[2] = k;
+                                int n = 3;
+                                do { //sortujemy wierzcholki
+                                    for (int l = 0; l < n - 1; l++) {
+                                        if (znalezionyTrojkat[l] > znalezionyTrojkat[l + 1]) {
+                                            int tmp = znalezionyTrojkat[l];
+                                            znalezionyTrojkat[l] = znalezionyTrojkat[l + 1];
+                                            znalezionyTrojkat[l + 1] = tmp;
+                                        }
+                                    }
+                                    n--;
+                                }
+                                while (n > 1);
+                                int licznikPowtorzen = 0;
+                                for (int l = 0; l < iloscTrojkatow; l++) { //sprawdzamy, czy nie mamy już takiego trojkata zapisanego
+                                    if (trojkaty[l,0] == znalezionyTrojkat[0] && trojkaty[l,1] == znalezionyTrojkat[1] && trojkaty[l,2] == znalezionyTrojkat[2]) {
+                                        licznikPowtorzen++;
+                                    }
+                                }
+                                if(licznikPowtorzen == 0) {
+                                    trojkaty[aktualnyWiersz,0] = znalezionyTrojkat[0];
+                                    trojkaty[aktualnyWiersz,1] = znalezionyTrojkat[1]; 
+                                    trojkaty[aktualnyWiersz,2] = znalezionyTrojkat[2];
+                                    int waga = 0;
+                                    for(int l = 0; l < maxPolaczen(iloscWierzcholkow); l++) {
+                                        if (polaczenia[l,0] == trojkaty[aktualnyWiersz,0] && polaczenia[l,1] == trojkaty[aktualnyWiersz,1])
+                                        {
+                                            waga = waga + polaczenia[l, 3];
+                                        }
+                                        if (polaczenia[l, 0] == trojkaty[aktualnyWiersz, 0] && polaczenia[l, 1] == trojkaty[aktualnyWiersz, 2])
+                                        {
+                                            waga = waga + polaczenia[l, 3];
+                                        }
+                                        if (polaczenia[l, 0] == trojkaty[aktualnyWiersz, 1] && polaczenia[l, 1] == trojkaty[aktualnyWiersz, 2])
+                                        {
+                                            waga = waga + polaczenia[l, 3];
+                                        }
+                                    }
+                                    trojkaty[aktualnyWiersz,3] = waga;
+                                    aktualnyWiersz++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return trojkaty;
         }
 
         private void uzupelnianieIstniejacychPolaczen(int iloscWierzcholkow, int[,] istnieniePolaczen, int[,] polaczenia) {
@@ -195,6 +253,6 @@
 
             return polaczenia;
         }
-        public int liczbaTrojkatow() => zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow);
+        public int liczbaTrojkatow() => zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow, polaczenia).GetLength(0);
     }
 }
