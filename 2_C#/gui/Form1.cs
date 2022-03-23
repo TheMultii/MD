@@ -28,58 +28,49 @@ namespace MD_graf_gui {
             }
 
             trianglesCountTextBox.Text = graphGenerator.liczbaTrojkatow().ToString();
-             wierzcholki = iloscWierzcholkow;
+            wierzcholki = iloscWierzcholkow;
         }
 
-        
-         private void Literowanie()
-        {
-            Graphics g = this.CreateGraphics();
-            int k,n=0,m=0;
 
-            for (int i = 0; i < wierzcholki; i++)
-            {
+        private void Literowanie(Graphics g) {
+            int k, n = 0, m = 0;
+
+            for (int i = 0; i < wierzcholki; i++) {
                 Point punkt = distinctPoints[i];
                 string literki = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 char[] alfa = literki.ToCharArray();
-                
-                
-                if (drawLiterki)
 
-                {
-                    if (n > 25) 
-                    {
+
+                if (drawLiterki) {
+                    if (n > 25) {
                         m++;
                         n = 0;
-                    }                   
-                    k = i;
-                    if (i <= 25)
-                    {
-  
-                        g.DrawString(alfa[i].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Red), new Point(punkt.X+5, punkt.Y + 5));
-
                     }
-                    else
-                    {  
-                            k -= 26 + 26*m;
-                       
-                       
-                        g.DrawString(alfa[m].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Orange), new Point(punkt.X -15, punkt.Y + 5)); // literka pomarańczowa dla przykładu kolor do zmiany
+                    k = i;
+                    if (i <= 25) {
+
+                        g.DrawString(alfa[i].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Red), new Point(punkt.X + 5, punkt.Y + 5));
+
+                    } else {
+                        k -= 26 + 26 * m;
+
+
+                        g.DrawString(alfa[m].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Orange), new Point(punkt.X - 15, punkt.Y + 5)); // literka pomarańczowa dla przykładu kolor do zmiany
                         g.DrawString(alfa[k].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Red), new Point(punkt.X + 5, punkt.Y + 5));
-                       
+
                         n++;
                     }
-                    
-                        
+
+
                 }
             }
 
 
         }
-        
-        
-        
-        
+
+
+
+
         private void drawGraph() {
             Graphics g = this.CreateGraphics();
             g.Clear(Color.White);
@@ -92,13 +83,13 @@ namespace MD_graf_gui {
                     g.DrawLine(new(colors[i], 4), start, end);
 
                     //wagi
-                    if(drawWeight) {
+                    if (drawWeight) {
                         g.DrawString(polaczenia[i, 3].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Black), new Point(((start.X + end.X) / 2), ((start.Y + end.Y) / 2)));
                     }
                 }
             }
-            
-            Literowanie();
+
+            Literowanie(g);
 
             for (int i = 0; i < distinctPoints.Length; i++) {
                 g.FillEllipse(new SolidBrush(Color.Black), distinctPoints[i].X - 5, distinctPoints[i].Y - 5, 10, 10);
@@ -121,7 +112,7 @@ namespace MD_graf_gui {
                     throw new Exception();
                 }
 
-                if(wierzcholki > 300 && !wasWarningAccepted) {
+                if (wierzcholki > 300 && !wasWarningAccepted) {
                     var result = MessageBox.Show($"Próbujesz wygenerowaæ graf zawieraj¹cy du¿¹ liczbê ({wierzcholki}) wierzcho³ków.\nGenerowanie takiego grafu mo¿e byæ zasobo¿erne, co za tym idzie mo¿e trwaæ doœæ d³ugo. Czy na pewno chcesz kontynuowaæ?", "Potrzebne potwierdzenie", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes) {
                         wasWarningAccepted = true;
@@ -129,8 +120,8 @@ namespace MD_graf_gui {
                         return;
                     }
                 }
-                
-                if(szansa <= 0.009 && !wasWarningAccepted) {
+
+                if (szansa <= 0.009 && !wasWarningAccepted) {
                     var result = MessageBox.Show($"Wprowadzona wartość szansy może sprawić, że komputer utworzy związki zawodowe i odmówi współpracy. Czy na pewno chcesz kontynuować?", "Potrzebne potwierdzenie", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes) {
                         wasWarningAccepted = true;
@@ -203,6 +194,11 @@ namespace MD_graf_gui {
 
         private void weightCheckBox_CheckedChanged(object sender, EventArgs e) {
             drawWeight = weightCheckBox.Checked;
+            drawGraph();
+        }
+
+        private void letterCheckBox_CheckedChanged(object sender, EventArgs e) {
+            drawLiterki = lettersCheckBox.Checked;
             drawGraph();
         }
     }
