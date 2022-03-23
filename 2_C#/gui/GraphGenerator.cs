@@ -35,9 +35,9 @@
             }
         }
 
-        private int zliczanieTrojkatow(int[,]? istnieniePolaczen, int iloscWierzcholkow) {
-            if (istnieniePolaczen == null) {
-                return -1;
+        private int[,]? zliczanieTrojkatow(int[,]? istnieniePolaczen, int iloscWierzcholkow, int[,]? polaczenia) {
+            if (istnieniePolaczen == null || polaczenia == null) {
+                return null;
             }
             int iloscTrojkatow = 0;
             for (int i = 0; i < iloscWierzcholkow; i++) { //przeszukiwanie tablicy, aż znajdziemy 1
@@ -51,7 +51,61 @@
                     }
                 }
             }
-            return iloscTrojkatow / 6; //zliczy każdy trójkąt 3! razy
+            iloscTrojkatow = iloscTrojkatow / 6;
+            int[,] trojkaty = new int[iloscTrojkatow, 4];
+            int[] znalezionyTrojkat = new int[3];
+            int aktualnyWiersz = 0;
+            for (int i = 0; i < iloscWierzcholkow; i++) { //przeszukiwanie tablicy, aż znajdziemy 1
+                for (int j = 0; j < iloscWierzcholkow; j++) {
+                    if (istnieniePolaczen[i, j] == 1) { //trafiamy na jakąś
+                        for (int k = 0; k < iloscWierzcholkow; k++) {
+                            if (istnieniePolaczen[k, i] == 1 && istnieniePolaczen[k, j] == 1) { //sprawdzamy czy w jednym wierszu dla obu kolumn są jedynki
+                                znalezionyTrojkat[0] = i; //zapisujemy wierzcholki znalezionego trojkata
+                                znalezionyTrojkat[1] = j;
+                                znalezionyTrojkat[2] = k;
+                                int n = 3;
+                                do { //sortujemy wierzcholki
+                                    for (int l = 0; l < n - 1; l++) {
+                                        if (znalezionyTrojkat[l] > znalezionyTrojkat[l + 1]) {
+                                            int tmp = znalezionyTrojkat[l];
+                                            znalezionyTrojkat[l] = znalezionyTrojkat[l + 1];
+                                            znalezionyTrojkat[l + 1] = tmp;
+                                        }
+                                    }
+                                    n--;
+                                }
+                                while (n > 1);
+                                int licznikPowtorzen = 0;
+                                for (int l = 0; l < iloscTrojkatow; l++) { //sprawdzamy, czy nie mamy już takiego trojkata zapisanego
+                                    if (trojkaty[l, 0] == znalezionyTrojkat[0] && trojkaty[l, 1] == znalezionyTrojkat[1] && trojkaty[l, 2] == znalezionyTrojkat[2]) {
+                                        licznikPowtorzen++;
+                                    }
+                                }
+                                if (licznikPowtorzen == 0) {
+                                    trojkaty[aktualnyWiersz, 0] = znalezionyTrojkat[0];
+                                    trojkaty[aktualnyWiersz, 1] = znalezionyTrojkat[1];
+                                    trojkaty[aktualnyWiersz, 2] = znalezionyTrojkat[2];
+                                    int waga = 0;
+                                    for (int l = 0; l < maxPolaczen(iloscWierzcholkow); l++) {
+                                        if (polaczenia[l, 0] == trojkaty[aktualnyWiersz, 0] && polaczenia[l, 1] == trojkaty[aktualnyWiersz, 1]) {
+                                            waga = waga + polaczenia[l, 3];
+                                        }
+                                        if (polaczenia[l, 0] == trojkaty[aktualnyWiersz, 0] && polaczenia[l, 1] == trojkaty[aktualnyWiersz, 2]) {
+                                            waga = waga + polaczenia[l, 3];
+                                        }
+                                        if (polaczenia[l, 0] == trojkaty[aktualnyWiersz, 1] && polaczenia[l, 1] == trojkaty[aktualnyWiersz, 2]) {
+                                            waga = waga + polaczenia[l, 3];
+                                        }
+                                    }
+                                    trojkaty[aktualnyWiersz, 3] = waga;
+                                    aktualnyWiersz++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return trojkaty;
         }
 
         private void uzupelnianieIstniejacychPolaczen(int iloscWierzcholkow, int[,] istnieniePolaczen, int[,] polaczenia) {
@@ -68,117 +122,109 @@
             }
         }
 
-    private bool sprawdzPoprawnoscGrafu(int iloscWierzcholkow, int[,] istnieniePolaczen, int[,] polaczenia) {
-    int ileWierzcholkowWystapilo = 0;
-    try {
-        uzupelnianieIstniejacychPolaczen(iloscWierzcholkow, istnieniePolaczen, polaczenia);
-        int[,] wierzcholkiDoSprawdzenia = new int[2, iloscWierzcholkow * iloscWierzcholkow];
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < iloscWierzcholkow * iloscWierzcholkow; j++) {
-                wierzcholkiDoSprawdzenia[i, j] = -1;
-            }
-        }
-        bool warunekZakonczenia = true;
-        int gdzieWpisacKolejnyWierzcholek = 0;
-        int obecnieSprawdzanyWierzcholek = 0;
-        bool[] sprawdzoneWierzcholki = new bool[iloscWierzcholkow];
-        for (int i = 0; i < iloscWierzcholkow; i++) {
-            sprawdzoneWierzcholki[i] = false;
-        }
-        for (int i = 0; i < iloscWierzcholkow; i++) {
-            if (istnieniePolaczen[0, i] == 1) {
-                wierzcholkiDoSprawdzenia[0, gdzieWpisacKolejnyWierzcholek] = i;
-                wierzcholkiDoSprawdzenia[1, gdzieWpisacKolejnyWierzcholek] = 0;
-                gdzieWpisacKolejnyWierzcholek++;
-            }
-        }
-        if (wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek] != -1) {
-            for (int i = obecnieSprawdzanyWierzcholek; i < iloscWierzcholkow * iloscWierzcholkow; i++) {
-                if (wierzcholkiDoSprawdzenia[0, i] != -1) {
-                    sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[0, i]] = true;
-                    sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[1, i]] = true;
-                }
-            }
-            for (int i = 0; i < iloscWierzcholkow; i++) {
-                if (sprawdzoneWierzcholki[i] == true)
-                {
-                    ileWierzcholkowWystapilo++;
-                }
-            }
-            if (ileWierzcholkowWystapilo == iloscWierzcholkow) {
-                warunekZakonczenia = false;
-            }
-            else {
-                ileWierzcholkowWystapilo = 0;
-            }
-        }
-        else {
-            warunekZakonczenia = false;
-        }
-        int kolumnaCzyWiersz = 0;
-        while (warunekZakonczenia == true) {
-            istnieniePolaczen[wierzcholkiDoSprawdzenia[1, obecnieSprawdzanyWierzcholek], wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek]] = 0;
-            if (kolumnaCzyWiersz == 0) {
-                for (int i = 0; i < iloscWierzcholkow; i++) {
-                    if (istnieniePolaczen[i, wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek]] == 1) {
-                        wierzcholkiDoSprawdzenia[0, gdzieWpisacKolejnyWierzcholek] = wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek];
-                        wierzcholkiDoSprawdzenia[1, gdzieWpisacKolejnyWierzcholek] = i;
-                        gdzieWpisacKolejnyWierzcholek++;
+        private bool sprawdzPoprawnoscGrafu(int iloscWierzcholkow, int[,] istnieniePolaczen, int[,] polaczenia) {
+            int ileWierzcholkowWystapilo = 0;
+            try {
+                uzupelnianieIstniejacychPolaczen(iloscWierzcholkow, istnieniePolaczen, polaczenia);
+                int[,] wierzcholkiDoSprawdzenia = new int[2, iloscWierzcholkow * iloscWierzcholkow];
+                for (int i = 0; i < 2; i++) {
+                    for (int j = 0; j < iloscWierzcholkow * iloscWierzcholkow; j++) {
+                        wierzcholkiDoSprawdzenia[i, j] = -1;
                     }
                 }
-                kolumnaCzyWiersz = 1;
-            }
-            else {
+                bool warunekZakonczenia = true;
+                int gdzieWpisacKolejnyWierzcholek = 0;
+                int obecnieSprawdzanyWierzcholek = 0;
+                bool[] sprawdzoneWierzcholki = new bool[iloscWierzcholkow];
                 for (int i = 0; i < iloscWierzcholkow; i++) {
-                    if (istnieniePolaczen[wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek], i] == 1) {
+                    sprawdzoneWierzcholki[i] = false;
+                }
+                for (int i = 0; i < iloscWierzcholkow; i++) {
+                    if (istnieniePolaczen[0, i] == 1) {
                         wierzcholkiDoSprawdzenia[0, gdzieWpisacKolejnyWierzcholek] = i;
-                        wierzcholkiDoSprawdzenia[1, gdzieWpisacKolejnyWierzcholek] = wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek];
+                        wierzcholkiDoSprawdzenia[1, gdzieWpisacKolejnyWierzcholek] = 0;
                         gdzieWpisacKolejnyWierzcholek++;
                     }
                 }
-                kolumnaCzyWiersz = 0;
-            }
-            obecnieSprawdzanyWierzcholek++;
-            if (wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek] != -1) {
-                for (int i = 0; i < iloscWierzcholkow * iloscWierzcholkow; i++) {
-                    if (wierzcholkiDoSprawdzenia[0, i] != -1) {
-                        sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[0, i]] = true;
-                        sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[1, i]] = true;
+                if (wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek] != -1) {
+                    for (int i = obecnieSprawdzanyWierzcholek; i < iloscWierzcholkow * iloscWierzcholkow; i++) {
+                        if (wierzcholkiDoSprawdzenia[0, i] != -1) {
+                            sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[0, i]] = true;
+                            sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[1, i]] = true;
+                        }
                     }
-                }
-                for (int i = 0; i < iloscWierzcholkow; i++) {
-                    if (sprawdzoneWierzcholki[i] == true) {
-                        ileWierzcholkowWystapilo++;
+                    for (int i = 0; i < iloscWierzcholkow; i++) {
+                        if (sprawdzoneWierzcholki[i] == true) {
+                            ileWierzcholkowWystapilo++;
+                        }
                     }
-                }
-                if (ileWierzcholkowWystapilo == iloscWierzcholkow) {
+                    if (ileWierzcholkowWystapilo == iloscWierzcholkow) {
+                        warunekZakonczenia = false;
+                    } else {
+                        ileWierzcholkowWystapilo = 0;
+                    }
+                } else {
                     warunekZakonczenia = false;
                 }
-                else {
-                    ileWierzcholkowWystapilo = 0;
+                int kolumnaCzyWiersz = 0;
+                while (warunekZakonczenia == true) {
+                    istnieniePolaczen[wierzcholkiDoSprawdzenia[1, obecnieSprawdzanyWierzcholek], wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek]] = 0;
+                    if (kolumnaCzyWiersz == 0) {
+                        for (int i = 0; i < iloscWierzcholkow; i++) {
+                            if (istnieniePolaczen[i, wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek]] == 1) {
+                                wierzcholkiDoSprawdzenia[0, gdzieWpisacKolejnyWierzcholek] = wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek];
+                                wierzcholkiDoSprawdzenia[1, gdzieWpisacKolejnyWierzcholek] = i;
+                                gdzieWpisacKolejnyWierzcholek++;
+                            }
+                        }
+                        kolumnaCzyWiersz = 1;
+                    } else {
+                        for (int i = 0; i < iloscWierzcholkow; i++) {
+                            if (istnieniePolaczen[wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek], i] == 1) {
+                                wierzcholkiDoSprawdzenia[0, gdzieWpisacKolejnyWierzcholek] = i;
+                                wierzcholkiDoSprawdzenia[1, gdzieWpisacKolejnyWierzcholek] = wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek];
+                                gdzieWpisacKolejnyWierzcholek++;
+                            }
+                        }
+                        kolumnaCzyWiersz = 0;
+                    }
+                    obecnieSprawdzanyWierzcholek++;
+                    if (wierzcholkiDoSprawdzenia[0, obecnieSprawdzanyWierzcholek] != -1) {
+                        for (int i = 0; i < iloscWierzcholkow * iloscWierzcholkow; i++) {
+                            if (wierzcholkiDoSprawdzenia[0, i] != -1) {
+                                sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[0, i]] = true;
+                                sprawdzoneWierzcholki[wierzcholkiDoSprawdzenia[1, i]] = true;
+                            }
+                        }
+                        for (int i = 0; i < iloscWierzcholkow; i++) {
+                            if (sprawdzoneWierzcholki[i] == true) {
+                                ileWierzcholkowWystapilo++;
+                            }
+                        }
+                        if (ileWierzcholkowWystapilo == iloscWierzcholkow) {
+                            warunekZakonczenia = false;
+                        } else {
+                            ileWierzcholkowWystapilo = 0;
+                        }
+                    } else {
+                        warunekZakonczenia = false;
+                    }
                 }
+            } catch (Exception) {
+                return false;
             }
-            else {
-                warunekZakonczenia = false;
-            }
-        }
-    }
-    catch (Exception) {
-        return false;
-    }
 
-    return ileWierzcholkowWystapilo == iloscWierzcholkow;
-}
+            return ileWierzcholkowWystapilo == iloscWierzcholkow;
+        }
 
         //=================//
 
-        private int[,]? istnieniePolaczen;
+        private int[,]? istnieniePolaczen,
+                        polaczenia;
         private int iloscWierzcholkow;
 
 
-        public int[,] stworzGraf(int iloscWierzcholkow = 5, int waga_min = 1, int waga_max=10, double szansa = 0.5) {
-
-            int[,] polaczenia;
+        public int[,] stworzGraf(int iloscWierzcholkow = 5, int waga_min = 1, int waga_max = 10, double szansa = 0.5) {
 
             this.iloscWierzcholkow = iloscWierzcholkow;
 
@@ -195,6 +241,9 @@
 
             return polaczenia;
         }
-        public int liczbaTrojkatow() => zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow);
+        public int liczbaTrojkatow() {
+            int[,]? temp = zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow, polaczenia);
+            return temp == null ? 0 : temp.GetLength(0);
+        }
     }
 }
