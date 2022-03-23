@@ -40,6 +40,7 @@
             this.trianglesCountTextBox = new System.Windows.Forms.TextBox();
             this.squaresCountButton = new System.Windows.Forms.Button();
             this.squaresCountTextBox = new System.Windows.Forms.TextBox();
+            this.lettersCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button1
@@ -140,11 +141,21 @@
             resources.ApplyResources(this.squaresCountTextBox, "squaresCountTextBox");
             this.squaresCountTextBox.Name = "squaresCountTextBox";
             // 
+            // lettersCheckBox
+            // 
+            resources.ApplyResources(this.lettersCheckBox, "lettersCheckBox");
+            this.lettersCheckBox.Checked = true;
+            this.lettersCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.lettersCheckBox.Name = "lettersCheckBox";
+            this.lettersCheckBox.UseVisualStyleBackColor = true;
+            this.lettersCheckBox.CheckedChanged += new System.EventHandler(this.letterCheckBox_CheckedChanged);
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.lettersCheckBox);
             this.Controls.Add(this.squaresCountButton);
             this.Controls.Add(this.squaresCountTextBox);
             this.Controls.Add(this.trianglesCountButton);
@@ -189,5 +200,6 @@
         private TextBox trianglesCountTextBox;
         private Button squaresCountButton;
         private TextBox squaresCountTextBox;
+        private CheckBox lettersCheckBox;
     }
 }

@@ -84,14 +84,8 @@
   <data name="squaresCountButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="squaresCountButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>947, 13</value>
-  </data>
   <data name="squaresCountButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>90, 23</value>
-  </data>
-  <data name="squaresCountButton.TabIndex" type="System.Int32, mscorlib">
-    <value>16</value>
   </data>
   <data name="squaresCountButton.Text" xml:space="preserve">
     <value>Kwadraty</value>
@@ -99,16 +93,22 @@
   <data name="squaresCountTextBox.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="squaresCountTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1043, 14</value>
-  </data>
   <data name="squaresCountTextBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>57, 23</value>
   </data>
-  <data name="squaresCountTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
-  </data>
   <data name="squaresCountTextBox.Text" xml:space="preserve">
     <value>¯\_(ツ)_/¯</value>
+  </data>
+  <data name="lettersCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lettersCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lettersCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 19</value>
+  </data>
+  <data name="lettersCheckBox.Text" xml:space="preserve">
+    <value>LITERY</value>
   </data>
 </root>
