@@ -87,13 +87,13 @@
                                     trojkaty[aktualnyWiersz, 2] = znalezionyTrojkat[2];
                                     int waga = 0;
                                     for (int l = 0; l < maxPolaczen(iloscWierzcholkow); l++) {
-                                        if (polaczenia[l, 0] == trojkaty[aktualnyWiersz, 0] && polaczenia[l, 1] == trojkaty[aktualnyWiersz, 1]) {
+                                        if (polaczenia[l, 0] - 1 == trojkaty[aktualnyWiersz, 0] && polaczenia[l, 1] - 1 == trojkaty[aktualnyWiersz, 1]) {
                                             waga = waga + polaczenia[l, 3];
                                         }
-                                        if (polaczenia[l, 0] == trojkaty[aktualnyWiersz, 0] && polaczenia[l, 1] == trojkaty[aktualnyWiersz, 2]) {
+                                        if (polaczenia[l, 0] - 1 == trojkaty[aktualnyWiersz, 0] && polaczenia[l, 1] - 1 == trojkaty[aktualnyWiersz, 2]) {
                                             waga = waga + polaczenia[l, 3];
                                         }
-                                        if (polaczenia[l, 0] == trojkaty[aktualnyWiersz, 1] && polaczenia[l, 1] == trojkaty[aktualnyWiersz, 2]) {
+                                        if (polaczenia[l, 0] - 1 == trojkaty[aktualnyWiersz, 1] && polaczenia[l, 1] - 1 == trojkaty[aktualnyWiersz, 2]) {
                                             waga = waga + polaczenia[l, 3];
                                         }
                                     }
