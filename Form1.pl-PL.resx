@@ -105,10 +105,40 @@
   <data name="lettersCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
+  <data name="lettersCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>170, 43</value>
+  </data>
   <data name="lettersCheckBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>61, 19</value>
   </data>
   <data name="lettersCheckBox.Text" xml:space="preserve">
     <value>LITERY</value>
+  </data>
+  <data name="button7.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="button7.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="button7.Size" type="System.Drawing.Size, System.Drawing">
+    <value>90, 23</value>
+  </data>
+  <data name="button7.Text" xml:space="preserve">
+    <value>Gęstość</value>
+  </data>
+  <data name="gestoscTextBox.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="gestoscTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>41, 23</value>
+  </data>
+  <data name="colorButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>108, 39</value>
+  </data>
+  <data name="colorButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 23</value>
+  </data>
+  <data name="colorButton.Text" xml:space="preserve">
+    <value>Kolor</value>
   </data>
 </root>
