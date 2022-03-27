@@ -219,10 +219,9 @@
 
         //=================//
 
-        private int[,]? istnieniePolaczen,
+        internal int[,]? istnieniePolaczen,
                         polaczenia;
         private int iloscWierzcholkow;
-
 
         public int[,] stworzGraf(int iloscWierzcholkow = 5, int waga_min = 1, int waga_max = 10, double szansa = 0.5) {
 
@@ -244,6 +243,18 @@
         public int liczbaTrojkatow() {
             int[,]? temp = zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow, polaczenia);
             return temp == null ? 0 : temp.GetLength(0);
+        }
+        
+        public double gestosc() {
+            int iloscKrawedzi = 0;
+            if (polaczenia != null) {
+                for (int i = 0; i < polaczenia.GetLength(0); i++) {
+                    if (polaczenia[i, 2] != -1) {
+                        iloscKrawedzi++;
+                    }
+                }
+            }
+            return iloscWierzcholkow / (iloscKrawedzi * (iloscKrawedzi - 1) / 2.0);
         }
     }
 }

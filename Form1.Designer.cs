@@ -41,6 +41,9 @@
             this.squaresCountButton = new System.Windows.Forms.Button();
             this.squaresCountTextBox = new System.Windows.Forms.TextBox();
             this.lettersCheckBox = new System.Windows.Forms.CheckBox();
+            this.button7 = new System.Windows.Forms.Button();
+            this.gestoscTextBox = new System.Windows.Forms.TextBox();
+            this.colorButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -150,11 +153,32 @@
             this.lettersCheckBox.UseVisualStyleBackColor = true;
             this.lettersCheckBox.CheckedChanged += new System.EventHandler(this.letterCheckBox_CheckedChanged);
             // 
+            // button7
+            // 
+            resources.ApplyResources(this.button7, "button7");
+            this.button7.Name = "button7";
+            this.button7.UseVisualStyleBackColor = true;
+            // 
+            // gestoscTextBox
+            // 
+            resources.ApplyResources(this.gestoscTextBox, "gestoscTextBox");
+            this.gestoscTextBox.Name = "gestoscTextBox";
+            // 
+            // colorButton
+            // 
+            resources.ApplyResources(this.colorButton, "colorButton");
+            this.colorButton.Name = "colorButton";
+            this.colorButton.UseVisualStyleBackColor = true;
+            this.colorButton.Click += new System.EventHandler(this.colorButton_Click);
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.colorButton);
+            this.Controls.Add(this.button7);
+            this.Controls.Add(this.gestoscTextBox);
             this.Controls.Add(this.lettersCheckBox);
             this.Controls.Add(this.squaresCountButton);
             this.Controls.Add(this.squaresCountTextBox);
@@ -201,5 +225,8 @@
         private Button squaresCountButton;
         private TextBox squaresCountTextBox;
         private CheckBox lettersCheckBox;
+        private Button button7;
+        private TextBox gestoscTextBox;
+        private Button colorButton;
     }
 }

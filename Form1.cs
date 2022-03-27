@@ -29,46 +29,30 @@ namespace MD_graf_gui {
 
             trianglesCountTextBox.Text = graphGenerator.liczbaTrojkatow().ToString();
             wierzcholki = iloscWierzcholkow;
+            gestoscTextBox.Text = graphGenerator.gestosc().ToString("0.###");
         }
 
+        private string getExcelColumnName(int columnNumber) {
+            int dividend = columnNumber;
+            string columnName = String.Empty;
+            int modulo;
 
-        private void Literowanie(Graphics g) {
-            int k, n = 0, m = 0;
-
-            for (int i = 0; i < wierzcholki; i++) {
-                Point punkt = distinctPoints[i];
-                string literki = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                char[] alfa = literki.ToCharArray();
-
-
-                if (drawLiterki) {
-                    if (n > 25) {
-                        m++;
-                        n = 0;
-                    }
-                    k = i;
-                    if (i <= 25) {
-
-                        g.DrawString(alfa[i].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Red), new Point(punkt.X + 5, punkt.Y + 5));
-
-                    } else {
-                        k -= 26 + 26 * m;
-
-
-                        g.DrawString(alfa[m].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Orange), new Point(punkt.X - 15, punkt.Y + 5)); // literka pomarańczowa dla przykładu kolor do zmiany
-                        g.DrawString(alfa[k].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Red), new Point(punkt.X + 5, punkt.Y + 5));
-
-                        n++;
-                    }
-
-
-                }
+            while (dividend > 0) {
+                modulo = (dividend - 1) % 26;
+                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
+                dividend = (int)((dividend - modulo) / 26);
             }
 
-
+            return columnName;
         }
 
-
+        private void Literowanie(Graphics g) {
+            for (int i = 0; i < wierzcholki; i++) {
+                string text = getExcelColumnName(i + 1);
+                Point punkt = distinctPoints[i];
+                g.DrawString(text, new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(letterColor), new Point(punkt.X - 10 - (text.Length == 1 ? 0 : (text.Length - 1) * 8), punkt.Y - 30));
+            }
+        }
 
 
         private void drawGraph() {
@@ -89,7 +73,10 @@ namespace MD_graf_gui {
                 }
             }
 
-            Literowanie(g);
+
+            if (drawLiterki) {
+                Literowanie(g);
+            }
 
             for (int i = 0; i < distinctPoints.Length; i++) {
                 g.FillEllipse(new SolidBrush(Color.Black), distinctPoints[i].X - 5, distinctPoints[i].Y - 5, 10, 10);
@@ -113,7 +100,7 @@ namespace MD_graf_gui {
                 }
 
                 if (wierzcholki > 300 && !wasWarningAccepted) {
-                    var result = MessageBox.Show($"Próbujesz wygenerowaæ graf zawieraj¹cy du¿¹ liczbê ({wierzcholki}) wierzcho³ków.\nGenerowanie takiego grafu mo¿e byæ zasobo¿erne, co za tym idzie mo¿e trwaæ doœæ d³ugo. Czy na pewno chcesz kontynuowaæ?", "Potrzebne potwierdzenie", MessageBoxButtons.YesNo);
+                    var result = MessageBox.Show($"Próbujesz wygenerować graf zawierający dużą liczbę ({wierzcholki}) wierzchołków.\nGenerowanie takiego grafu może być zasobożerne, co za tym idzie może trwać dość długo. Czy na pewno chcesz kontynuować?", "Potrzebne potwierdzenie", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes) {
                         wasWarningAccepted = true;
                     } else {
@@ -137,7 +124,7 @@ namespace MD_graf_gui {
                 wagaMINInput.Text = "1";
                 wagaMAXInput.Text = "10";
                 szansaInput.Text = "0,5";
-                MessageBox.Show("Podane wartoœci s¹ b³êdne", "Jak zawsze coœ posz³o nie tak", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Podane wartości są błędne", "Jak zawsze coś poszło nie tak", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -148,6 +135,7 @@ namespace MD_graf_gui {
                      wasWarningAccepted = false;
         private int pointIndexBeingMoved = -1;
         private string preString = "";
+        private Color letterColor = Color.FromArgb(128,0,255);
 
         private void mMove(object sender, MouseEventArgs e) {
             if (isMouseDown) {
@@ -164,6 +152,14 @@ namespace MD_graf_gui {
                 drawGraph();
             }
             isMouseDown = false;
+        }
+
+        private void colorButton_Click(object sender, EventArgs e) {
+            ColorDialog colorDialog = new();
+            if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                letterColor = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
+                drawGraph();
+            }
         }
 
         void mDown(object sender, MouseEventArgs e) {
