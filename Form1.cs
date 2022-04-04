@@ -162,6 +162,131 @@ namespace MD_graf_gui {
             }
         }
 
+        public void printRaport(int[] dist, int n, int src, int[,] graph)
+        {
+            DateTime thisDay = DateTime.Now;
+            string dataString = thisDay.ToString("d")+"_"+ thisDay.ToString("HH") + "_" + thisDay.ToString("mm") + "_" + thisDay.ToString("ss")+"_";
+            using StreamWriter file = new("Raport_graf_"+wierzcholki+"_wierzcholkow_data_"+dataString+".txt");
+            file.WriteLineAsync("Raport wyrysowanego grafu");
+            file.WriteLineAsync("Ilość wierzchołków: "+wierzcholki);
+            file.WriteLineAsync("Zakres wag: "+wagaMINInput.Text +" - "+wagaMAXInput.Text);
+            file.WriteLineAsync("liczba trójkątów: "+trianglesCountTextBox.Text);
+            file.WriteLineAsync();
+
+
+
+            file.WriteLineAsync("Wierzchołek     Dystans z wierzchołka - " + getExcelColumnName(src+1) + ":\n");
+            
+            for (int i = 0; i < wierzcholki; i++)
+                if(i!=src)
+                file.WriteLineAsync(getExcelColumnName(i + 1) + " \t\t " + dist[i] + "\n");
+
+            //for (int h = 0; h < wierzcholki; h++) {
+            //    for (int y = 0; y < wierzcholki; y++)
+            //    {
+            //        file.WriteAsync(graph[h,y]+" ");
+            //    }
+            //    file.WriteLineAsync("\n");
+            //}
+        }
+
+        public int minDistance(int[] dist, bool[] sptSet)
+        {
+            int min = int.MaxValue, min_index = -1;
+
+            for (int v = 0; v < wierzcholki; v++)
+                if (sptSet[v] == false && dist[v] <= min)
+                {
+                    min = dist[v];
+                    min_index = v;
+                }
+
+            return min_index;
+        }
+        public void dijkstra(int[,] graph, int src)
+        {
+            int[] dist = new int[wierzcholki];
+            bool[] sptSet = new bool[wierzcholki];
+
+            for (int i = 0; i < wierzcholki; i++)
+            {
+                dist[i] = int.MaxValue;
+                sptSet[i] = false;
+            }
+
+            dist[src] = 0;
+
+            for (int count = 0; count < wierzcholki - 1; count++)
+            {
+                int u = minDistance(dist, sptSet);
+
+                sptSet[u] = true;
+
+                for (int v = 0; v < wierzcholki; v++)
+                    if (!sptSet[v] && graph[u, v] != 0 &&
+                        dist[u] != int.MaxValue && dist[u] + graph[u, v] < dist[v])
+                        dist[v] = dist[u] + graph[u, v];
+            }
+
+            printRaport(dist, wierzcholki, src, graph);
+        }
+        private void najkrotszaDrogaButton_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                if (najkrotszaDrogaInput.Text != "")
+                {
+                    string wierzcholekString = najkrotszaDrogaInput.Text;
+                    int wierzcholekInt = (int)wierzcholekString[0];
+                    if (wierzcholekInt >= 97 && wierzcholekInt <= 122) { 
+                        wierzcholekInt -= 97; 
+                    }
+                    else if (wierzcholekInt >= 65 && wierzcholekInt <= 90)
+                    {
+                        wierzcholekInt -= 65;
+                    }
+                    else {
+                        throw new Exception();
+                    }
+                    if (wierzcholekInt >= 0 && wierzcholekInt <= wierzcholki)
+                    {
+                        int[,] graph = new int[wierzcholki, wierzcholki];
+
+
+                        for (int i = 0; i < wierzcholki; i++)
+                        {
+                            for (int j = 0; j < wierzcholki; j++)
+                            {
+                                graph[i, j] = 0;
+                            }
+                        }
+                        for (int r = 0; r < polaczenia.GetLength(0); r++)
+                        {
+                            if (polaczenia[r, 2] == 1)
+                            {
+
+                                graph[polaczenia[r, 0] - 1, polaczenia[r, 1] - 1] = polaczenia[r, 3];
+                                graph[polaczenia[r, 1] - 1, polaczenia[r, 0] - 1] = polaczenia[r, 3];
+                            };
+                        }
+
+                        dijkstra(graph, wierzcholekInt);
+
+                    }
+                }
+                else {
+                    throw new Exception();
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Podaj wierzchołek (A-Z)", "Jak zawsze coś poszło nie tak", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
+
+
         void mDown(object sender, MouseEventArgs e) {
             bool isFound = false;
             for (int i = 0; i < distinctPoints.Length; i++) {

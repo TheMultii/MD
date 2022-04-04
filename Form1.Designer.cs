@@ -44,6 +44,9 @@
             this.button7 = new System.Windows.Forms.Button();
             this.gestoscTextBox = new System.Windows.Forms.TextBox();
             this.colorButton = new System.Windows.Forms.Button();
+            this.najkrotszaDrogaButton = new System.Windows.Forms.Button();
+            this.najkrotszaDrogaInput = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -171,11 +174,31 @@
             this.colorButton.UseVisualStyleBackColor = true;
             this.colorButton.Click += new System.EventHandler(this.colorButton_Click);
             // 
+            // najkrotszaDrogaButton
+            // 
+            resources.ApplyResources(this.najkrotszaDrogaButton, "najkrotszaDrogaButton");
+            this.najkrotszaDrogaButton.Name = "najkrotszaDrogaButton";
+            this.najkrotszaDrogaButton.UseVisualStyleBackColor = true;
+            this.najkrotszaDrogaButton.Click += new System.EventHandler(this.najkrotszaDrogaButton_Click);
+            // 
+            // najkrotszaDrogaInput
+            // 
+            resources.ApplyResources(this.najkrotszaDrogaInput, "najkrotszaDrogaInput");
+            this.najkrotszaDrogaInput.Name = "najkrotszaDrogaInput";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.najkrotszaDrogaButton);
+            this.Controls.Add(this.najkrotszaDrogaInput);
             this.Controls.Add(this.colorButton);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.gestoscTextBox);
@@ -228,5 +251,8 @@
         private Button button7;
         private TextBox gestoscTextBox;
         private Button colorButton;
+        private Button najkrotszaDrogaButton;
+        private TextBox najkrotszaDrogaInput;
+        private Label label1;
     }
 }
