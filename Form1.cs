@@ -13,6 +13,7 @@ namespace MD_graf_gui {
         private Color[] colors;
         private int[,] polaczenia;
         private int wierzcholki;
+        private int[,]? trojkatyPolaczenia;
 
         private void drawPoints(int iloscWierzcholkow = 5, int waga_min = 1, int waga_max = 10, double szansa = 0.5) {
             GraphGenerator graphGenerator = new();
@@ -30,6 +31,7 @@ namespace MD_graf_gui {
             trianglesCountTextBox.Text = graphGenerator.liczbaTrojkatow().ToString();
             wierzcholki = iloscWierzcholkow;
             gestoscTextBox.Text = graphGenerator.gestosc().ToString("0.###");
+            trojkatyPolaczenia = graphGenerator.trojkatyPolaczenia();
         }
 
         private string getExcelColumnName(int columnNumber) {
@@ -165,21 +167,64 @@ namespace MD_graf_gui {
         public void printRaport(int[] dist, int n, int src, int[,] graph)
         {
             DateTime thisDay = DateTime.Now;
-            string dataString = thisDay.ToString("d")+"_"+ thisDay.ToString("HH") + "_" + thisDay.ToString("mm") + "_" + thisDay.ToString("ss")+"_";
-            using StreamWriter file = new("Raport_graf_"+wierzcholki+"_wierzcholkow_data_"+dataString+".txt");
+            string dataString = thisDay.ToString("d") + "_" + thisDay.ToString("HH") + "_" + thisDay.ToString("mm") + "_" + thisDay.ToString("ss") + "_";
+            using StreamWriter file = new("Raport_graf_" + wierzcholki + "_wierzcholkow_data_" + dataString + ".txt");
             file.WriteLineAsync("Raport wyrysowanego grafu");
-            file.WriteLineAsync("Ilość wierzchołków: "+wierzcholki);
-            file.WriteLineAsync("Zakres wag: "+wagaMINInput.Text +" - "+wagaMAXInput.Text);
-            file.WriteLineAsync("liczba trójkątów: "+trianglesCountTextBox.Text);
+            file.WriteLineAsync("Ilość wierzchołków: " + wierzcholki);
+            file.WriteLineAsync("Zakres wag: " + wagaMINInput.Text + " - " + wagaMAXInput.Text);
+            file.WriteLineAsync("Liczba trójkątów: " + trianglesCountTextBox.Text);
             file.WriteLineAsync();
 
 
 
-            file.WriteLineAsync("Wierzchołek     Dystans z wierzchołka - " + getExcelColumnName(src+1) + ":\n");
-            
+            file.WriteLineAsync("Wierzchołek     Dystans z wierzchołka - " + getExcelColumnName(src + 1) + ":\n");
+
             for (int i = 0; i < wierzcholki; i++)
-                if(i!=src)
-                file.WriteLineAsync(getExcelColumnName(i + 1) + " \t\t " + dist[i] + "\n");
+                if (i != src)
+                    file.WriteLineAsync(getExcelColumnName(i + 1) + " \t\t " + dist[i] + "\n");
+            file.WriteLineAsync();
+
+
+
+            file.WriteLineAsync("Połączenie wierzchołków   Waga \n");
+            string textWagi="";
+            for (int i = 0; i < polaczenia.GetLength(0); i++)
+            {
+
+                textWagi += getExcelColumnName(polaczenia[i, 0]) + " z " + getExcelColumnName(polaczenia[i, 1]) + " \t\t\t ";
+                if (polaczenia[i, 2] == 1)
+                {
+                    textWagi += polaczenia[i, 3] + "\n\n";
+                }
+                else
+                {
+
+                    textWagi += "brak połączenia\n\n";
+
+                }
+            }
+            file.WriteLineAsync(textWagi);
+
+            file.WriteLineAsync();
+
+            int trojkatyPolaczeniaDlugosc = trojkatyPolaczenia.GetLength(0);
+            if (trojkatyPolaczeniaDlugosc > 0)
+            {
+                file.WriteLineAsync("Trójkąty \tWaga \n");
+                string textTrojkaty = "";
+                int test = trojkatyPolaczenia.GetLength(0);
+                for (int i = 0; i < trojkatyPolaczenia.GetLength(0); i++)
+                {
+
+                    textTrojkaty += "(" + getExcelColumnName(trojkatyPolaczenia[i, 0]+1) + ", " + getExcelColumnName(trojkatyPolaczenia[i, 1]+1) + ", " + getExcelColumnName(trojkatyPolaczenia[i, 2]+1) + ") \t" + trojkatyPolaczenia[i, 3]+"\n\n";
+                }
+                file.WriteLineAsync(textTrojkaty);
+            }
+
+
+
+
+
 
             //for (int h = 0; h < wierzcholki; h++) {
             //    for (int y = 0; y < wierzcholki; y++)
@@ -188,6 +233,11 @@ namespace MD_graf_gui {
             //    }
             //    file.WriteLineAsync("\n");
             //}
+
+
+            MessageBox.Show("Wygenerowano raport, w folderze aplikacji","Raport info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            
+            
         }
 
         public int minDistance(int[] dist, bool[] sptSet)
@@ -230,6 +280,39 @@ namespace MD_graf_gui {
 
             printRaport(dist, wierzcholki, src, graph);
         }
+        public int charValue(char x)
+        {
+            int xToNumber = (int)x;
+            if (xToNumber >= 97 && xToNumber <= 122)
+            {
+                xToNumber -= 97;
+            }
+            else if (xToNumber >= 65 && x <= 90)
+            {
+                xToNumber -= 65;
+            }
+
+            return xToNumber;
+        }
+        private int stringToInt(string getName)
+        {
+            string vertixName = getName;
+            int vertixNameLength = vertixName.Length;
+            int[] vertixNameTabInt = new int[vertixName.Length];
+            for (int i = 0; i < vertixNameLength; i++) {
+                vertixNameTabInt[i] = charValue(vertixName[i]);
+
+            }
+            int vertixNumber = 0;
+            for (int i = 0; i < vertixNameLength; i++)
+            {
+                vertixNumber += vertixNameTabInt[i];
+                vertixNumber += 1;
+                if(i != vertixNameLength-1)vertixNumber *= 26;
+            }
+
+            return vertixNumber-1; 
+        }
         private void najkrotszaDrogaButton_Click(object sender, EventArgs e)
         {
 
@@ -237,18 +320,8 @@ namespace MD_graf_gui {
             {
                 if (najkrotszaDrogaInput.Text != "")
                 {
-                    string wierzcholekString = najkrotszaDrogaInput.Text;
-                    int wierzcholekInt = (int)wierzcholekString[0];
-                    if (wierzcholekInt >= 97 && wierzcholekInt <= 122) { 
-                        wierzcholekInt -= 97; 
-                    }
-                    else if (wierzcholekInt >= 65 && wierzcholekInt <= 90)
-                    {
-                        wierzcholekInt -= 65;
-                    }
-                    else {
-                        throw new Exception();
-                    }
+                    int wierzcholekInt = stringToInt(najkrotszaDrogaInput.Text);
+                    
                     if (wierzcholekInt >= 0 && wierzcholekInt <= wierzcholki)
                     {
                         int[,] graph = new int[wierzcholki, wierzcholki];
@@ -274,16 +347,20 @@ namespace MD_graf_gui {
                         dijkstra(graph, wierzcholekInt);
 
                     }
+                    else
+                    {
+                        throw new Exception();
+                    }
                 }
-                else {
+                else
+                {
                     throw new Exception();
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show("Podaj wierzchołek (A-Z)", "Jak zawsze coś poszło nie tak", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Podaj wierzchołek (string/char)", "Jak zawsze coś poszło nie tak", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
 
 

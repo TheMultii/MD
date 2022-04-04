@@ -107,7 +107,87 @@
             }
             return trojkaty;
         }
-
+        private int[,]? zliczanieKwadratow(int[,]? istnieniePolaczen, int iloscWierzcholkow, int[,]? polaczenia) {
+            int iloscKwadratow = 0;
+            for(int i = 0; i < iloscWierzcholkow; i++) {
+                for(int j = 0; j < iloscWierzcholkow; j++) {
+                    if (istnieniePolaczen[i,j] == 1) {
+                        for(int k = 0; k < iloscKwadratow; k++) {
+                            if(istnieniePolaczen[k,i] == 1 && k != j) {
+                                for(int l = 0; l < iloscWierzcholkow; l++) {
+                                    if(istnieniePolaczen[l,j] == 1 && istnieniePolaczen[k,l] == 1 && l != j) {
+                                        iloscKwadratow++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            iloscKwadratow = iloscKwadratow/8;
+            int [,] kwadraty = new int [iloscKwadratow,5];
+            int [] znalezionyKwadrat = new int [4];
+            int aktualnyWiersz = 0;
+            for(int i = 0; i < iloscWierzcholkow; i++) {
+                for(int j = 0; j < iloscWierzcholkow; j++) {
+                    if (istnieniePolaczen[i,j] == 1) {
+                        for(int k = 0; k < iloscKwadratow; k++) {
+                            if(istnieniePolaczen[k,i] == 1 && k != j) {
+                                for(int l = 0; l < iloscWierzcholkow; l++) {
+                                    if(istnieniePolaczen[l,j] == 1 && istnieniePolaczen[k,l] == 1 && l != j) {
+                                        znalezionyKwadrat[0] = i;
+                                        znalezionyKwadrat[1] = j;
+                                        znalezionyKwadrat[2] = k;
+                                        znalezionyKwadrat[3] = l;
+                                        int n = 4;
+                                        do { //sortujemy wierzcholki
+                                            for (int m = 0; m < n - 1; m++) {
+                                                if (znalezionyKwadrat[m] > znalezionyKwadrat[m + 1]) {
+                                                    int tmp = znalezionyKwadrat[m];
+                                                    znalezionyKwadrat[m] = znalezionyKwadrat[m + 1];
+                                                    znalezionyKwadrat[m + 1] = tmp;
+                                                }
+                                            }
+                                            n--;
+                                        }
+                                        while (n > 1);
+                                        int licznikPowtorzen = 0;
+                                        for (int m = 0; m < iloscKwadratow; m++) { //sprawdzamy, czy nie mamy już takiego trojkata zapisanego
+                                            if (kwadraty[m, 0] == znalezionyKwadrat[0] && kwadraty[m, 1] == znalezionyKwadrat[1] && kwadraty[m, 2] == znalezionyKwadrat[2] && kwadraty[m,3] == znalezionyKwadrat[3]) {
+                                                licznikPowtorzen++;
+                                            }
+                                        }
+                                        if (licznikPowtorzen == 0) {
+                                            kwadraty[aktualnyWiersz, 0] = znalezionyKwadrat[0];
+                                            kwadraty[aktualnyWiersz, 1] = znalezionyKwadrat[1];
+                                            kwadraty[aktualnyWiersz, 2] = znalezionyKwadrat[2];
+                                            int waga = 0;
+                                            for (int m = 0; m < maxPolaczen(iloscWierzcholkow); m++) {
+                                                if (polaczenia[m, 0] - 1 == kwadraty[aktualnyWiersz, 0] && polaczenia[m, 1] - 1 == kwadraty[aktualnyWiersz, 1]) {
+                                                    waga = waga + polaczenia[l, 3];
+                                                }
+                                                if (polaczenia[m, 0] - 1 == kwadraty[aktualnyWiersz, 1] && polaczenia[m, 1] - 1 == kwadraty[aktualnyWiersz, 2]) {
+                                                    waga = waga + polaczenia[l, 3];
+                                                }
+                                                if (polaczenia[m, 0] - 1 == kwadraty[aktualnyWiersz, 2] && polaczenia[m, 1] - 1 == kwadraty[aktualnyWiersz, 3]) {
+                                                    waga = waga + polaczenia[l, 3];
+                                                }
+                                                if (polaczenia[m, 0] - 1 == kwadraty[aktualnyWiersz, 3] && polaczenia[m, 1] - 1 == kwadraty[aktualnyWiersz, 0]) {
+                                                    waga = waga + polaczenia[l, 3];
+                                                }
+                                            }
+                                            kwadraty[aktualnyWiersz, 3] = waga;
+                                            aktualnyWiersz++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return kwadraty;
+        }
         private void uzupelnianieIstniejacychPolaczen(int iloscWierzcholkow, int[,] istnieniePolaczen, int[,] polaczenia) {
             for (int i = 0; i < iloscWierzcholkow; i++) {
                 for (int j = 0; j < iloscWierzcholkow; j++) {
@@ -244,7 +324,12 @@
             int[,]? temp = zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow, polaczenia);
             return temp == null ? 0 : temp.GetLength(0);
         }
-        
+        public int[,]? trojkatyPolaczenia()
+        {
+            int[,]? temp = zliczanieTrojkatow(istnieniePolaczen, iloscWierzcholkow, polaczenia);
+            return temp;
+        }
+
         public double gestosc() {
             int iloscKrawedzi = 0;
             if (polaczenia != null) {
