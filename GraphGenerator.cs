@@ -108,7 +108,7 @@
             return trojkaty;
         }
 
-        public List<List<int>> zliczanieKwadratow(int[,]? graph) {
+        private List<List<int>> zliczanieKwadratow(int[,]? graph) {
             List<List<int>> cykle = new();
             if (graph != null) {
                 for (int i = 0; i < iloscWierzcholkow; i++) {
