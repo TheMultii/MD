@@ -14,6 +14,7 @@ namespace MD_graf_gui {
         private int[,] polaczenia;
         private int wierzcholki;
         private int[,]? trojkatyPolaczenia;
+        private List<List<int>>? kwadratyPolaczenia;
 
         private void drawPoints(int iloscWierzcholkow = 5, int waga_min = 1, int waga_max = 10, double szansa = 0.5) {
             GraphGenerator graphGenerator = new();
@@ -32,6 +33,8 @@ namespace MD_graf_gui {
             wierzcholki = iloscWierzcholkow;
             gestoscTextBox.Text = graphGenerator.gestosc().ToString("0.###");
             trojkatyPolaczenia = graphGenerator.trojkatyPolaczenia();
+            kwadratyPolaczenia = graphGenerator.kwadratyPolaczenia();
+            squaresCountTextBox.Text = graphGenerator.liczbaKwadratow().ToString();
         }
 
         private string getExcelColumnName(int columnNumber) {
@@ -137,7 +140,7 @@ namespace MD_graf_gui {
                      wasWarningAccepted = false;
         private int pointIndexBeingMoved = -1;
         private string preString = "";
-        private Color letterColor = Color.FromArgb(128,0,255);
+        private Color letterColor = Color.FromArgb(128, 0, 255);
 
         private void mMove(object sender, MouseEventArgs e) {
             if (isMouseDown) {
@@ -164,16 +167,16 @@ namespace MD_graf_gui {
             }
         }
 
-        public void printRaport(int[] dist, int n, int src, int[,] graph)
-        {
+        public void printRaport(int[] dist, int n, int src, int[,] graph) {
             DateTime thisDay = DateTime.Now;
-            string dataString = thisDay.ToString("d") + "_" + thisDay.ToString("HH") + "_" + thisDay.ToString("mm") + "_" + thisDay.ToString("ss") + "_";
-            using StreamWriter file = new("Raport_graf_" + wierzcholki + "_wierzcholkow_data_" + dataString + ".txt");
+            string dataString = $"{thisDay.ToString("d")}_{thisDay.ToString("HH")}_{thisDay.ToString("mm")}_{thisDay.ToString("ss")}";
+            using StreamWriter file = new($"Raport_graf_{wierzcholki}_wierzcholkow_data_{dataString}.txt");
             file.WriteLineAsync("Raport wyrysowanego grafu");
-            file.WriteLineAsync("Ilość wierzchołków: " + wierzcholki);
-            file.WriteLineAsync("Zakres wag: " + wagaMINInput.Text + " - " + wagaMAXInput.Text);
-            file.WriteLineAsync("Liczba trójkątów: " + trianglesCountTextBox.Text);
-            file.WriteLineAsync();
+            file.WriteLineAsync($"Ilość wierzchołków: {wierzcholki}");
+            file.WriteLineAsync($"Szansa na wygenerowanie krawędzi: {szansaInput.Text}");
+            file.WriteLineAsync($"Zakres wag: {wagaMINInput.Text}-{wagaMAXInput.Text}");
+            file.WriteLineAsync($"Liczba trójkątów: {trianglesCountTextBox.Text}");
+            file.WriteLineAsync($"Liczba kwadratów: {squaresCountTextBox.Text}");
 
 
 
@@ -187,17 +190,13 @@ namespace MD_graf_gui {
 
 
             file.WriteLineAsync("Połączenie wierzchołków   Waga \n");
-            string textWagi="";
-            for (int i = 0; i < polaczenia.GetLength(0); i++)
-            {
+            string textWagi = "";
+            for (int i = 0; i < polaczenia.GetLength(0); i++) {
 
                 textWagi += getExcelColumnName(polaczenia[i, 0]) + " z " + getExcelColumnName(polaczenia[i, 1]) + " \t\t\t ";
-                if (polaczenia[i, 2] == 1)
-                {
+                if (polaczenia[i, 2] == 1) {
                     textWagi += polaczenia[i, 3] + "\n\n";
-                }
-                else
-                {
+                } else {
 
                     textWagi += "brak połączenia\n\n";
 
@@ -208,66 +207,53 @@ namespace MD_graf_gui {
             file.WriteLineAsync();
 
             int trojkatyPolaczeniaDlugosc = trojkatyPolaczenia.GetLength(0);
-            if (trojkatyPolaczeniaDlugosc > 0)
-            {
+            if (trojkatyPolaczeniaDlugosc > 0) {
                 file.WriteLineAsync("Trójkąty \tWaga \n");
                 string textTrojkaty = "";
                 int test = trojkatyPolaczenia.GetLength(0);
-                for (int i = 0; i < trojkatyPolaczenia.GetLength(0); i++)
-                {
+                for (int i = 0; i < trojkatyPolaczenia.GetLength(0); i++) {
 
-                    textTrojkaty += "(" + getExcelColumnName(trojkatyPolaczenia[i, 0]+1) + ", " + getExcelColumnName(trojkatyPolaczenia[i, 1]+1) + ", " + getExcelColumnName(trojkatyPolaczenia[i, 2]+1) + ") \t" + trojkatyPolaczenia[i, 3]+"\n\n";
+                    textTrojkaty += "(" + getExcelColumnName(trojkatyPolaczenia[i, 0] + 1) + ", " + getExcelColumnName(trojkatyPolaczenia[i, 1] + 1) + ", " + getExcelColumnName(trojkatyPolaczenia[i, 2] + 1) + ") \t" + trojkatyPolaczenia[i, 3] + "\n\n";
                 }
                 file.WriteLineAsync(textTrojkaty);
             }
 
+            file.WriteLineAsync();
+            if (Convert.ToInt32(squaresCountTextBox.Text) >= 1 && kwadratyPolaczenia != null) {
+                file.WriteLineAsync("Kwadraty \n");
+                string textKwadraty = "";
+                for (int i = 0; i < kwadratyPolaczenia.Count; i++) {
+                    textKwadraty += $"({getExcelColumnName(kwadratyPolaczenia[i][0] + 1)}, {getExcelColumnName(kwadratyPolaczenia[i][1] + 1)}, {getExcelColumnName(kwadratyPolaczenia[i][2] + 1)}, {getExcelColumnName(kwadratyPolaczenia[i][3] + 1)})\n\n";
+                }
+                file.WriteLineAsync(textKwadraty);
+            }
 
-
-
-
-
-            //for (int h = 0; h < wierzcholki; h++) {
-            //    for (int y = 0; y < wierzcholki; y++)
-            //    {
-            //        file.WriteAsync(graph[h,y]+" ");
-            //    }
-            //    file.WriteLineAsync("\n");
-            //}
-
-
-            MessageBox.Show("Wygenerowano raport, w folderze aplikacji","Raport info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            
-            
+            MessageBox.Show("Wygenerowano raport, w folderze aplikacji", "Raport info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        public int minDistance(int[] dist, bool[] sptSet)
-        {
+        public int minDistance(int[] dist, bool[] sptSet) {
             int min = int.MaxValue, min_index = -1;
 
             for (int v = 0; v < wierzcholki; v++)
-                if (sptSet[v] == false && dist[v] <= min)
-                {
+                if (sptSet[v] == false && dist[v] <= min) {
                     min = dist[v];
                     min_index = v;
                 }
 
             return min_index;
         }
-        public void dijkstra(int[,] graph, int src)
-        {
+        public void dijkstra(int[,] graph, int src) {
             int[] dist = new int[wierzcholki];
             bool[] sptSet = new bool[wierzcholki];
 
-            for (int i = 0; i < wierzcholki; i++)
-            {
+            for (int i = 0; i < wierzcholki; i++) {
                 dist[i] = int.MaxValue;
                 sptSet[i] = false;
             }
 
             dist[src] = 0;
 
-            for (int count = 0; count < wierzcholki - 1; count++)
-            {
+            for (int count = 0; count < wierzcholki - 1; count++) {
                 int u = minDistance(dist, sptSet);
 
                 sptSet[u] = true;
@@ -280,22 +266,17 @@ namespace MD_graf_gui {
 
             printRaport(dist, wierzcholki, src, graph);
         }
-        public int charValue(char x)
-        {
+        public int charValue(char x) {
             int xToNumber = (int)x;
-            if (xToNumber >= 97 && xToNumber <= 122)
-            {
+            if (xToNumber >= 97 && xToNumber <= 122) {
                 xToNumber -= 97;
-            }
-            else if (xToNumber >= 65 && x <= 90)
-            {
+            } else if (xToNumber >= 65 && x <= 90) {
                 xToNumber -= 65;
             }
 
             return xToNumber;
         }
-        private int stringToInt(string getName)
-        {
+        private int stringToInt(string getName) {
             string vertixName = getName;
             int vertixNameLength = vertixName.Length;
             int[] vertixNameTabInt = new int[vertixName.Length];
@@ -304,40 +285,31 @@ namespace MD_graf_gui {
 
             }
             int vertixNumber = 0;
-            for (int i = 0; i < vertixNameLength; i++)
-            {
+            for (int i = 0; i < vertixNameLength; i++) {
                 vertixNumber += vertixNameTabInt[i];
                 vertixNumber += 1;
-                if(i != vertixNameLength-1)vertixNumber *= 26;
+                if (i != vertixNameLength - 1) vertixNumber *= 26;
             }
 
-            return vertixNumber-1; 
+            return vertixNumber - 1;
         }
-        private void najkrotszaDrogaButton_Click(object sender, EventArgs e)
-        {
+        private void najkrotszaDrogaButton_Click(object sender, EventArgs e) {
 
-            try
-            {
-                if (najkrotszaDrogaInput.Text != "")
-                {
+            try {
+                if (najkrotszaDrogaInput.Text != "") {
                     int wierzcholekInt = stringToInt(najkrotszaDrogaInput.Text);
-                    
-                    if (wierzcholekInt >= 0 && wierzcholekInt <= wierzcholki)
-                    {
+
+                    if (wierzcholekInt >= 0 && wierzcholekInt <= wierzcholki) {
                         int[,] graph = new int[wierzcholki, wierzcholki];
 
 
-                        for (int i = 0; i < wierzcholki; i++)
-                        {
-                            for (int j = 0; j < wierzcholki; j++)
-                            {
+                        for (int i = 0; i < wierzcholki; i++) {
+                            for (int j = 0; j < wierzcholki; j++) {
                                 graph[i, j] = 0;
                             }
                         }
-                        for (int r = 0; r < polaczenia.GetLength(0); r++)
-                        {
-                            if (polaczenia[r, 2] == 1)
-                            {
+                        for (int r = 0; r < polaczenia.GetLength(0); r++) {
+                            if (polaczenia[r, 2] == 1) {
 
                                 graph[polaczenia[r, 0] - 1, polaczenia[r, 1] - 1] = polaczenia[r, 3];
                                 graph[polaczenia[r, 1] - 1, polaczenia[r, 0] - 1] = polaczenia[r, 3];
@@ -346,23 +318,16 @@ namespace MD_graf_gui {
 
                         dijkstra(graph, wierzcholekInt);
 
-                    }
-                    else
-                    {
+                    } else {
                         throw new Exception();
                     }
-                }
-                else
-                {
+                } else {
                     throw new Exception();
                 }
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 MessageBox.Show("Podaj wierzchołek (string/char)", "Jak zawsze coś poszło nie tak", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
         void mDown(object sender, MouseEventArgs e) {
             bool isFound = false;
