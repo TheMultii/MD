@@ -2,31 +2,36 @@ namespace MD_graf_gui {
     public partial class Form1 : Form {
         public Form1() {
             InitializeComponent();
-        }
-
-        int GetRandomInt(int minimum, int maximum) {
-            Random r = new();
-            return r.Next(minimum, maximum);
+            distinctPoints = Array.Empty<Point>();
+            colors = Array.Empty<Color>();
+            polaczenia = new int[0, 0];
         }
 
         private Point[] distinctPoints;
         private Color[] colors;
         private int[,] polaczenia;
-        private int wierzcholki;
+        private int wierzcholki, pointIndexBeingMoved = -1;
         private int[,]? trojkatyPolaczenia;
         private List<List<int>>? kwadratyPolaczenia;
+        private bool isMouseDown = false,
+                     isBold = false,
+                     drawWeight = true,
+                     drawLiterki = true,
+                     wasWarningAccepted = false;
+        private string preString = "";
+        private Color letterColor = Color.FromArgb(128, 0, 255);
 
         private void drawPoints(int iloscWierzcholkow = 5, int waga_min = 1, int waga_max = 10, double szansa = 0.5) {
             GraphGenerator graphGenerator = new();
             polaczenia = graphGenerator.stworzGraf(iloscWierzcholkow, waga_min, waga_max, szansa);
             distinctPoints = new Point[iloscWierzcholkow];
             for (int i = 0; i < iloscWierzcholkow; i++) {
-                distinctPoints[i] = new Point(GetRandomInt(40, this.Width - 40), GetRandomInt(50, this.Height - 50)); //pozycje punktów
+                distinctPoints[i] = new Point(graphGenerator.getRandomInt(40, this.Width - 40), graphGenerator.getRandomInt(50, this.Height - 50)); //pozycje punktów
             }
 
             colors = new Color[polaczenia.Length];
             for (int i = 0; i < polaczenia.Length; i++) {
-                colors[i] = Color.FromArgb(GetRandomInt(0, 200), GetRandomInt(0, 200), GetRandomInt(0, 200));
+                colors[i] = Color.FromArgb(graphGenerator.getRandomInt(0, 200), graphGenerator.getRandomInt(0, 200), graphGenerator.getRandomInt(0, 200));
             }
 
             trianglesCountTextBox.Text = graphGenerator.liczbaTrojkatow().ToString();
@@ -51,14 +56,13 @@ namespace MD_graf_gui {
             return columnName;
         }
 
-        private void Literowanie(Graphics g) {
+        private void literowanie(Graphics g) {
             for (int i = 0; i < wierzcholki; i++) {
                 string text = getExcelColumnName(i + 1);
                 Point punkt = distinctPoints[i];
                 g.DrawString(text, new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(letterColor), new Point(punkt.X - 10 - (text.Length == 1 ? 0 : (text.Length - 1) * 8), punkt.Y - 30));
             }
         }
-
 
         private void drawGraph() {
             Graphics g = this.CreateGraphics();
@@ -80,7 +84,7 @@ namespace MD_graf_gui {
 
 
             if (drawLiterki) {
-                Literowanie(g);
+                literowanie(g);
             }
 
             for (int i = 0; i < distinctPoints.Length; i++) {
@@ -88,7 +92,7 @@ namespace MD_graf_gui {
             }
         }
 
-        private void Form1_Shown(object sender, EventArgs e) {
+        private void form1_Shown(object sender, EventArgs e) {
             drawPoints();
             drawGraph();
         }
@@ -133,15 +137,6 @@ namespace MD_graf_gui {
             }
         }
 
-        private bool isMouseDown = false,
-                     isBold = false,
-                     drawWeight = true,
-                     drawLiterki = true,
-                     wasWarningAccepted = false;
-        private int pointIndexBeingMoved = -1;
-        private string preString = "";
-        private Color letterColor = Color.FromArgb(128, 0, 255);
-
         private void mMove(object sender, MouseEventArgs e) {
             if (isMouseDown) {
                 button2.Text = $"{preString}{e.X}, {e.Y}";
@@ -167,11 +162,11 @@ namespace MD_graf_gui {
             }
         }
 
-        public void printRaport(int[] dist, int n, int src, int[,] graph) {
+        public void printRaport(int[] dist, int src) {
             DateTime thisDay = DateTime.Now;
             string dataString = $"{thisDay.ToString("d")}_{thisDay.ToString("HH")}_{thisDay.ToString("mm")}_{thisDay.ToString("ss")}";
             using StreamWriter file = new($"Raport_graf_{wierzcholki}_wierzcholkow_data_{dataString}.txt");
-            file.WriteLineAsync("Raport wyrysowanego grafu");
+            file.WriteLineAsync("Raport wyrysowanego grafu\n");
             file.WriteLineAsync($"Ilość wierzchołków: {wierzcholki}");
             file.WriteLineAsync($"Szansa na wygenerowanie krawędzi: {szansaInput.Text}");
             file.WriteLineAsync($"Zakres wag: {wagaMINInput.Text}-{wagaMAXInput.Text}");
@@ -206,24 +201,25 @@ namespace MD_graf_gui {
 
             file.WriteLineAsync();
 
-            int trojkatyPolaczeniaDlugosc = trojkatyPolaczenia.GetLength(0);
-            if (trojkatyPolaczeniaDlugosc > 0) {
-                file.WriteLineAsync("Trójkąty \tWaga \n");
-                string textTrojkaty = "";
-                int test = trojkatyPolaczenia.GetLength(0);
-                for (int i = 0; i < trojkatyPolaczenia.GetLength(0); i++) {
-
-                    textTrojkaty += "(" + getExcelColumnName(trojkatyPolaczenia[i, 0] + 1) + ", " + getExcelColumnName(trojkatyPolaczenia[i, 1] + 1) + ", " + getExcelColumnName(trojkatyPolaczenia[i, 2] + 1) + ") \t" + trojkatyPolaczenia[i, 3] + "\n\n";
+            if (trojkatyPolaczenia != null) {
+                int trojkatyPolaczeniaDlugosc = trojkatyPolaczenia.GetLength(0);
+                if (trojkatyPolaczeniaDlugosc > 0) {
+                    file.WriteLineAsync("Trójkąty \tWaga\n");
+                    string textTrojkaty = "";
+                    int test = trojkatyPolaczenia.GetLength(0);
+                    for (int i = 0; i < trojkatyPolaczenia.GetLength(0); i++) {
+                        textTrojkaty += $"({getExcelColumnName(trojkatyPolaczenia[i, 0] + 1)}, {getExcelColumnName(trojkatyPolaczenia[i, 1] + 1)}, {getExcelColumnName(trojkatyPolaczenia[i, 2] + 1)})\t{trojkatyPolaczenia[i, 3]}\n\n";
+                    }
+                    file.WriteLineAsync(textTrojkaty);
                 }
-                file.WriteLineAsync(textTrojkaty);
             }
 
             file.WriteLineAsync();
             if (Convert.ToInt32(squaresCountTextBox.Text) >= 1 && kwadratyPolaczenia != null) {
-                file.WriteLineAsync("Kwadraty \n");
+                file.WriteLineAsync("Kwadraty \tWaga\n");
                 string textKwadraty = "";
                 for (int i = 0; i < kwadratyPolaczenia.Count; i++) {
-                    textKwadraty += $"({getExcelColumnName(kwadratyPolaczenia[i][0] + 1)}, {getExcelColumnName(kwadratyPolaczenia[i][1] + 1)}, {getExcelColumnName(kwadratyPolaczenia[i][2] + 1)}, {getExcelColumnName(kwadratyPolaczenia[i][3] + 1)})\n\n";
+                    textKwadraty += $"({getExcelColumnName(kwadratyPolaczenia[i][0] + 1)}, {getExcelColumnName(kwadratyPolaczenia[i][1] + 1)}, {getExcelColumnName(kwadratyPolaczenia[i][2] + 1)}, {getExcelColumnName(kwadratyPolaczenia[i][3] + 1)})\t{kwadratyPolaczenia[i][4]}\n\n";
                 }
                 file.WriteLineAsync(textKwadraty);
             }
@@ -264,7 +260,7 @@ namespace MD_graf_gui {
                         dist[v] = dist[u] + graph[u, v];
             }
 
-            printRaport(dist, wierzcholki, src, graph);
+            printRaport(dist, src);
         }
         public int charValue(char x) {
             int xToNumber = (int)x;
