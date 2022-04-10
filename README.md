@@ -4,4 +4,4 @@
 Matematyka dyskretna, sem 4
 
 ## Przykładowy output
-<img src="https://i.imgur.com/qSOTe53.png" />
+<img src="https://i.imgur.com/czcFDvs.png />
