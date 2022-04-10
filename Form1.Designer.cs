@@ -220,7 +220,7 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
-            this.Shown += new System.EventHandler(this.Form1_Shown);
+            this.Shown += new System.EventHandler(this.form1_Shown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mUp);

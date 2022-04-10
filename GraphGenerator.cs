@@ -1,8 +1,6 @@
 ﻿namespace MD_graf_gui {
     public class GraphGenerator {
-        private double GetRandomDouble(double minimum, double maximum) => new Random().NextDouble() * (maximum - minimum) + minimum;
-
-        private int GetRandomInt(int minimum, int maximum) => new Random().Next(minimum, maximum);
+        public int getRandomInt(int minimum, int maximum) => new Random().Next(minimum, maximum);
 
         private int maxPolaczen(int liczbaWierzcholkow) => (liczbaWierzcholkow * (liczbaWierzcholkow - 1)) / 2; //wzór na ilość krawędzi grafu pełnego
 
@@ -29,9 +27,9 @@
 
         private void stworz(int[,] p, int n, double szansa, int waga_min, int waga_max) {
             for (int i = 0; i < n; i++) {
-                double random = GetRandomInt(0, 100) / 100.0;
+                double random = getRandomInt(0, 100) / 100.0;
                 p[i, 2] = szansa >= random ? 1 : -1; // 1 - połączenie, -1 - brak
-                p[i, 3] = GetRandomInt(waga_min, waga_max);
+                p[i, 3] = getRandomInt(waga_min, waga_max);
             }
         }
 
@@ -110,20 +108,33 @@
 
         private List<List<int>> zliczanieKwadratow(int[,]? graph) {
             List<List<int>> cykle = new();
+            List<string> sorted_non_duplicates = new();
             if (graph != null) {
                 for (int i = 0; i < iloscWierzcholkow; i++) {
-                    for (int j = i + 1; j < iloscWierzcholkow; j++) {
-                        if (graph[i, j] == 1) {
-                            for (int k = j + 1; k < iloscWierzcholkow; k++) {
-                                if (graph[j, k] == 1) {
-                                    for (int l = k + 1; l < iloscWierzcholkow; l++) {
-                                        if (graph[k, l] == 1 && graph[l, i] == 1) {
-                                            List<int> cykl = new();
+                    for (int j = 0; j < iloscWierzcholkow; j++) {
+                        if (i != j && graph[i, j] == 1) {
+                            for (int k = 0; k < iloscWierzcholkow; k++) {
+                                if (i != k && j != k && graph[j, k] == 1) {
+                                    for (int l = 0; l < iloscWierzcholkow; l++) {
+                                        if (i != l && j != l && k != l && graph[k, l] == 1 && graph[l, i] == 1) {
+                                            List<int> cykl = new(),
+                                                      sort_temp;
                                             cykl.Add(i);
                                             cykl.Add(j);
                                             cykl.Add(k);
                                             cykl.Add(l);
-                                            cykle.Add(cykl);
+                                            sort_temp = new(cykl);
+                                            cykl.Add(appendSquareWage(polaczenia,i, j, k, l));
+                                            sort_temp.Sort();
+
+                                            System.Text.StringBuilder temp = new();
+                                            foreach (var item in sort_temp) {
+                                                temp.Append($"{item},");
+                                            }
+                                            if (!sorted_non_duplicates.Contains(temp.ToString())) {
+                                                sorted_non_duplicates.Add(temp.ToString());
+                                                cykle.Add(cykl);
+                                            }
                                         }
                                     }
                                 }
@@ -133,6 +144,27 @@
                 }
             }
             return cykle;
+        }
+
+        private int appendSquareWage(int[,]? polaczenia, int i, int j, int k, int l) {
+            int wage = 0;
+            if (polaczenia != null) {
+                for (int a = 0; a < polaczenia.GetLength(0); a++) {
+                    if (polaczenia[a, 0] == i && polaczenia[a, 1] == j) {
+                        wage += polaczenia[a, 3];
+                    }
+                    if (polaczenia[a, 0] == j && polaczenia[a, 1] == k) {
+                        wage += polaczenia[a, 3];
+                    }
+                    if (polaczenia[a, 0] == k && polaczenia[a, 1] == l) {
+                        wage += polaczenia[a, 3];
+                    }
+                    if (polaczenia[a, 0] == l && polaczenia[a, 1] == i) {
+                        wage += polaczenia[a, 3];
+                    }
+                }
+            }
+            return wage;
         }
 
         private void uzupelnianieIstniejacychPolaczen(int iloscWierzcholkow, int[,] istnieniePolaczen, int[,] polaczenia) {
