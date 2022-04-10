@@ -24,5 +24,5 @@ jobs:
     - name: upload project artifacts
       uses: actions/upload-artifact@v2
       with: 
-        name: gui_${{ env.REPO_NAME }}.${{ env.BRANCH_NAME }}.${{ env.GIT_BUILD_ID }}
+        name: gui
         path: ./bin/Debug/net6.0-windows
