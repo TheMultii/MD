@@ -150,16 +150,16 @@ namespace MD_graf_gui_2 {
             int wage = 0;
             if (polaczenia != null) {
                 for (int a = 0; a < polaczenia.GetLength(0); a++) {
-                    if (polaczenia[a, 0] == i && polaczenia[a, 1] == j) {
+                    if ((polaczenia[a, 0] == i + 1 && polaczenia[a, 1] == j + 1) || (polaczenia[a, 0] == j + 1 && polaczenia[a, 1] == i + 1)) {
                         wage += polaczenia[a, 3];
                     }
-                    if (polaczenia[a, 0] == j && polaczenia[a, 1] == k) {
+                    if ((polaczenia[a, 0] == j + 1 && polaczenia[a, 1] == k + 1) || (polaczenia[a, 0] == k + 1 && polaczenia[a, 1] == j + 1)) {
                         wage += polaczenia[a, 3];
                     }
-                    if (polaczenia[a, 0] == k && polaczenia[a, 1] == l) {
+                    if ((polaczenia[a, 0] == k + 1 && polaczenia[a, 1] == l + 1) || (polaczenia[a, 0] == l + 1 && polaczenia[a, 1] == k + 1)) {
                         wage += polaczenia[a, 3];
                     }
-                    if (polaczenia[a, 0] == l && polaczenia[a, 1] == i) {
+                    if ((polaczenia[a, 0] == l + 1 && polaczenia[a, 1] == i + 1) || (polaczenia[a, 0] == i + 1 && polaczenia[a, 1] == l + 1)) {
                         wage += polaczenia[a, 3];
                     }
                 }
