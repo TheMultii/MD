@@ -1,4 +1,4 @@
-﻿namespace MD_graf_gui {
+namespace MD_graf_gui_2 {
     public class GraphGenerator {
         public int getRandomInt(int minimum, int maximum) => new Random().Next(minimum, maximum);
 

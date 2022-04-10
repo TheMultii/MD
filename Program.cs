@@ -1,4 +1,4 @@
-namespace MD_graf_gui {
+namespace MD_graf_gui_2 {
     internal static class Program {
         /// <summary>
         ///  The main entry point for the application.
