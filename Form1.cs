@@ -1,11 +1,18 @@
-namespace MD_graf_gui {
+using System.Runtime.InteropServices;
+
+namespace MD_graf_gui_2 {
     public partial class Form1 : Form {
-        public Form1() {
-            InitializeComponent();
-            distinctPoints = Array.Empty<Point>();
-            colors = Array.Empty<Color>();
-            polaczenia = new int[0, 0];
-        }
+
+        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        private static extern IntPtr CreateRoundRectRgn
+        (
+            int nLeftRect, // x-coordinate of upper-left corner
+            int nTopRect, // y-coordinate of upper-left corner
+            int nRightRect, // x-coordinate of lower-right corner
+            int nBottomRect, // y-coordinate of lower-right corner
+            int nWidthEllipse, // height of ellipse
+            int nHeightEllipse // width of ellipse
+        );
 
         private Point[] distinctPoints;
         private Color[] colors;
@@ -18,20 +25,111 @@ namespace MD_graf_gui {
                      drawWeight = true,
                      drawLiterki = true,
                      wasWarningAccepted = false;
-        private string preString = "";
+        //private string preString = "";
         private Color letterColor = Color.FromArgb(128, 0, 255);
 
+        public Form1() {
+            InitializeComponent();
+            distinctPoints = Array.Empty<Point>();
+            colors = Array.Empty<Color>();
+            polaczenia = new int[0, 0];
+            Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 25, 25));
+            pnlNav.Height = btnGenerator.Height;
+            pnlNav.Top = btnGenerator.Top;
+            pnlNav.Left = btnGenerator.Left;
+            btnGenerator.BackColor = Color.FromArgb(46, 51, 73);
+        }
+
+        private void btnGenerator_Click(object sender, EventArgs e) {
+            pnlNav.Height = btnGenerator.Height;
+            pnlNav.Top = btnGenerator.Top;
+            pnlNav.Left = btnGenerator.Left;
+            btnGenerator.BackColor = Color.FromArgb(46, 51, 73);
+            label3.Text = "Generator grafów";
+        }
+
+        private void btnRaport_Click(object sender, EventArgs e) {
+            string promptValue = ShowDialog("Podaj wierzchołek (string/char)", "Generowanie raportu");
+            if (promptValue != "") {
+                try {
+                    int wierzcholekInt = stringToInt(promptValue);
+
+                    if (wierzcholekInt >= 0 && wierzcholekInt <= wierzcholki) {
+                        int[,] graph = new int[wierzcholki, wierzcholki];
+
+
+                        for (int i = 0; i < wierzcholki; i++) {
+                            for (int j = 0; j < wierzcholki; j++) {
+                                graph[i, j] = 0;
+                            }
+                        }
+                        for (int r = 0; r < polaczenia.GetLength(0); r++) {
+                            if (polaczenia[r, 2] == 1) {
+
+                                graph[polaczenia[r, 0] - 1, polaczenia[r, 1] - 1] = polaczenia[r, 3];
+                                graph[polaczenia[r, 1] - 1, polaczenia[r, 0] - 1] = polaczenia[r, 3];
+                            };
+                        }
+
+                        dijkstra(graph, wierzcholekInt);
+
+                    } else {
+                        throw new Exception();
+                    }
+                } catch (Exception) {
+                    MessageBox.Show("Podaj wierzchołek (string/char)", "Jak zawsze coś poszło nie tak", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        //private void btnGenerator_Leave(object sender, EventArgs e) {
+        //    btnGenerator.BackColor = Color.FromArgb(24, 30, 54);
+        //}
+
+        //private void btnSettings_Leave(object sender, EventArgs e) {
+        //    btnSettings.BackColor = Color.FromArgb(24, 30, 54);
+        //}
+
+        private void button1_Click(object sender, EventArgs e) {
+            Close();
+        }
+
+        private string ShowDialog(string text, string caption) {
+            Form prompt = new Form() {
+                Width = 450,
+                Height = 170,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = caption,
+                StartPosition = FormStartPosition.CenterScreen,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                ShowInTaskbar = false,
+                TopMost = true
+            };
+            Label textLabel = new() { Left = 25, Top = 20, Width = 400, Text = text };
+            TextBox textBox = new() { Left = 25, Top = 50, Width = 400 };
+            Button confirmation = new() { Text = "Ok", Left = 300, Width = 125, Top = 90, DialogResult = DialogResult.OK };
+            confirmation.Click += (sender, e) => { prompt.Close(); };
+            prompt.Controls.Add(textBox);
+            prompt.Controls.Add(confirmation);
+            prompt.Controls.Add(textLabel);
+            prompt.AcceptButton = confirmation;
+
+            return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
+        }
+
+        //==//
         private void drawPoints(int iloscWierzcholkow = 5, int waga_min = 1, int waga_max = 10, double szansa = 0.5) {
             GraphGenerator graphGenerator = new();
             polaczenia = graphGenerator.stworzGraf(iloscWierzcholkow, waga_min, waga_max, szansa);
             distinctPoints = new Point[iloscWierzcholkow];
             for (int i = 0; i < iloscWierzcholkow; i++) {
-                distinctPoints[i] = new Point(graphGenerator.getRandomInt(40, this.Width - 40), graphGenerator.getRandomInt(50, this.Height - 50)); //pozycje punktów
+                distinctPoints[i] = new Point(graphGenerator.getRandomInt(20, graphPanel.Width - 20), graphGenerator.getRandomInt(20, graphPanel.Height - 20)); //pozycje punktów
             }
 
             colors = new Color[polaczenia.Length];
             for (int i = 0; i < polaczenia.Length; i++) {
-                colors[i] = Color.FromArgb(graphGenerator.getRandomInt(0, 200), graphGenerator.getRandomInt(0, 200), graphGenerator.getRandomInt(0, 200));
+                colors[i] = Color.FromArgb(graphGenerator.getRandomInt(55, 255), graphGenerator.getRandomInt(55, 255), graphGenerator.getRandomInt(55, 255));
             }
 
             trianglesCountTextBox.Text = graphGenerator.liczbaTrojkatow().ToString();
@@ -65,8 +163,8 @@ namespace MD_graf_gui {
         }
 
         private void drawGraph() {
-            Graphics g = this.CreateGraphics();
-            g.Clear(Color.White);
+            Graphics g = graphPanel.CreateGraphics();
+            g.Clear(Color.FromArgb(46, 51, 73));
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             for (int i = 0; i < polaczenia.GetLength(0); i++) {
@@ -77,7 +175,7 @@ namespace MD_graf_gui {
 
                     //wagi
                     if (drawWeight) {
-                        g.DrawString(polaczenia[i, 3].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.Black), new Point(((start.X + end.X) / 2), ((start.Y + end.Y) / 2)));
+                        g.DrawString(polaczenia[i, 3].ToString(), new Font("Arial", 16, isBold ? FontStyle.Bold : FontStyle.Regular), new SolidBrush(Color.White), new Point(((start.X + end.X) / 2), ((start.Y + end.Y) / 2)));
                     }
                 }
             }
@@ -97,7 +195,7 @@ namespace MD_graf_gui {
             drawGraph();
         }
 
-        private void button1_Click(object sender, EventArgs e) {
+        private void generateGraphButton_Click(object sender, EventArgs e) {
             try {
                 int wierzcholki = int.Parse(wierzcholkiInput.Text),
                 waga_min = int.Parse(wagaMINInput.Text),
@@ -137,14 +235,6 @@ namespace MD_graf_gui {
             }
         }
 
-        private void mMove(object sender, MouseEventArgs e) {
-            if (isMouseDown) {
-                button2.Text = $"{preString}{e.X}, {e.Y}";
-            } else {
-                button2.Text = $"{preString}-, -";
-            }
-        }
-
         private void mUp(object sender, MouseEventArgs e) {
             if (isMouseDown && pointIndexBeingMoved != -1) {
                 distinctPoints[pointIndexBeingMoved] = new(e.X, e.Y);
@@ -152,14 +242,6 @@ namespace MD_graf_gui {
                 drawGraph();
             }
             isMouseDown = false;
-        }
-
-        private void colorButton_Click(object sender, EventArgs e) {
-            ColorDialog colorDialog = new();
-            if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                letterColor = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
-                drawGraph();
-            }
         }
 
         public void printRaport(int[] dist, int src) {
@@ -224,7 +306,15 @@ namespace MD_graf_gui {
                 file.WriteLineAsync(textKwadraty);
             }
 
-            MessageBox.Show("Wygenerowano raport, w folderze aplikacji", "Raport info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Wygenerowano raport, w folderze aplikacji.", "Raport info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void mMove(object sender, MouseEventArgs e) {
+            //if (isMouseDown) {
+            //    button2.Text = $"{preString}{e.X}, {e.Y}";
+            //} else {
+            //    button2.Text = $"{preString}-, -";
+            //}
         }
 
         public int minDistance(int[] dist, bool[] sptSet) {
@@ -289,76 +379,27 @@ namespace MD_graf_gui {
 
             return vertixNumber - 1;
         }
-        private void najkrotszaDrogaButton_Click(object sender, EventArgs e) {
-
-            try {
-                if (najkrotszaDrogaInput.Text != "") {
-                    int wierzcholekInt = stringToInt(najkrotszaDrogaInput.Text);
-
-                    if (wierzcholekInt >= 0 && wierzcholekInt <= wierzcholki) {
-                        int[,] graph = new int[wierzcholki, wierzcholki];
-
-
-                        for (int i = 0; i < wierzcholki; i++) {
-                            for (int j = 0; j < wierzcholki; j++) {
-                                graph[i, j] = 0;
-                            }
-                        }
-                        for (int r = 0; r < polaczenia.GetLength(0); r++) {
-                            if (polaczenia[r, 2] == 1) {
-
-                                graph[polaczenia[r, 0] - 1, polaczenia[r, 1] - 1] = polaczenia[r, 3];
-                                graph[polaczenia[r, 1] - 1, polaczenia[r, 0] - 1] = polaczenia[r, 3];
-                            };
-                        }
-
-                        dijkstra(graph, wierzcholekInt);
-
-                    } else {
-                        throw new Exception();
-                    }
-                } else {
-                    throw new Exception();
-                }
-            } catch (Exception) {
-                MessageBox.Show("Podaj wierzchołek (string/char)", "Jak zawsze coś poszło nie tak", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
 
         void mDown(object sender, MouseEventArgs e) {
-            bool isFound = false;
+            //bool isFound = false;
             for (int i = 0; i < distinctPoints.Length; i++) {
                 Point pt = distinctPoints[i];
                 if (e.X - 10 <= pt.X && pt.X <= e.X + 10 && e.Y - 10 <= pt.Y && pt.Y <= e.Y + 10) {
                     pointIndexBeingMoved = i;
-                    preString = $"({pt.X}, {pt.Y}) ";
-                    isFound = true;
+                    //preString = $"({pt.X}, {pt.Y}) ";
+                    //isFound = true;
                     break;
                 }
             }
 
             //debug
-            if (!isFound) {
-                preString = "";
-            }
+            //if (!isFound) {
+            //    preString = "";
+            //}
             //debug
 
             isMouseDown = true;
         }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e) {
-            isBold = boldCheckBox.Checked;
-            drawGraph();
-        }
-
-        private void weightCheckBox_CheckedChanged(object sender, EventArgs e) {
-            drawWeight = weightCheckBox.Checked;
-            drawGraph();
-        }
-
-        private void letterCheckBox_CheckedChanged(object sender, EventArgs e) {
-            drawLiterki = lettersCheckBox.Checked;
-            drawGraph();
-        }
+        //==//
     }
 }
